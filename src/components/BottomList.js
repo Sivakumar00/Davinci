@@ -17,7 +17,7 @@ export default class BottomList extends React.Component {
         <Text  tabLabel='Assessments'>
           <Assessment/>
         </Text>
-        <Text tabLabel='Organisational Tree'>favorite</Text>
+        <Text style={{color:'white'}} tabLabel='Organisational Tree'>I am IRON MAN</Text>
       
       </ScrollableTabView>
     );
