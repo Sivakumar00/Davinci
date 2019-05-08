@@ -1,44 +1,32 @@
 import React from 'react';
-import { StyleSheet, Text, View ,Dimensions,Image,ImageBackground,AsyncStorage,ActivityIndicator} from 'react-native';
-import { TabView, SceneMap } from 'react-native-tab-view';
-
-
-const FirstRoute = () => (
-    <View style={[styles.scene, { backgroundColor: '#ff4081' }]} />
-  );
-const SecondRoute = () => (
-    <View style={[styles.scene, { backgroundColor: '#673ab7' }]} />
-  );
+import { Text ,StyleSheet} from 'react-native';
+import { Constants } from 'expo';
+import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
+import Assessment from './Assessment';
 
 export default class BottomList extends React.Component {
-
-   state = {
-    index: 0,
-    routes: [
-      { key: 'first', title: 'First' },
-      { key: 'second', title: 'Second' },
-    ],
-  };
-  
   render() {
     return (
-        <TabView
-            navigationState={this.state}
-            renderScene={SceneMap({
-                first: FirstRoute,
-                second: SecondRoute,
-            })}
-        onIndexChange={index => this.setState({ index })}
-        initialLayout={{ width: Dimensions.get('window').width }}
-      />
-    ); 
+      <ScrollableTabView style={StyleSheet.tab}
+      tabBarActiveTextColor='#fff'
+        tabBarUnderlineStyle={{backgroundColor:'white'}}
+        tabBarInactiveTextColor='#90a4ae'
+        initialPage={0}
+        renderTabBar={() => <ScrollableTabBar />}
+      >
+        <Text  tabLabel='Assessments'>
+          <Assessment/>
+        </Text>
+        <Text tabLabel='Organisational Tree'>favorite</Text>
+      
+      </ScrollableTabView>
+    );
   }
 }
- 
-const styles=StyleSheet.create({
-
-    scene: {
-        flexGrow: 1,
-      },
-  
-}); 
+const styles = StyleSheet.create({
+  tab:{
+    flexGrow:1,
+    height:'80%',
+    alignItems:'flex-start'
+  }
+})

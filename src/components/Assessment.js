@@ -13,10 +13,10 @@ export default class Assessment extends React.Component {
        <Text>adf</Text>
     );
   }
-}
+} 
 
 const styles = StyleSheet.create({
-  container: {
+  container: { 
     flexGrow: 1,
     height:100,
     backgroundColor: '#455a64',

@@ -77,19 +77,18 @@ const styles=StyleSheet.create({
     headerbackground:{
         flex:1,
         width:null,
-        height:200,
+        maxHeight:200,
         alignSelf:'stretch'
     },
     header:{
-        flex:1,
         alignItems:'center',
         padding:20,
-        height:200,
+        maxHeight:200,
         backgroundColor:'rgba(0,0,0,0.5)'
     },
     profilePicWrap:{
-        width:140,
-        height:140,
+        width:100,
+        height:100,
         marginTop:10,
         borderRadius:100,
         borderColor:'rgba(0,0,0,0.4)',
