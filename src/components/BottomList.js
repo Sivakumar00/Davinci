@@ -3,6 +3,7 @@ import { Text ,StyleSheet} from 'react-native';
 import { Constants } from 'expo';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Assessment from './Assessment';
+import OrganisationalTree from './OrganisationTree';
 
 export default class BottomList extends React.Component {
   render() {
@@ -17,7 +18,9 @@ export default class BottomList extends React.Component {
         <Text  tabLabel='Assessments'>
           <Assessment/>
         </Text>
-        <Text style={{color:'white'}} tabLabel='Organisational Tree'>I am IRON MAN</Text>
+        <Text tabLabel='Organisational Tree'>
+          <OrganisationalTree/>
+        </Text>
       
       </ScrollableTabView>
     );
