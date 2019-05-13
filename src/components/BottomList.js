@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text ,StyleSheet} from 'react-native';
+import { View, Text ,StyleSheet} from 'react-native';
 import { Constants } from 'expo';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Assessment from './Assessment';
@@ -15,12 +15,12 @@ export default class BottomList extends React.Component {
         initialPage={0}
         renderTabBar={() => <ScrollableTabBar />}
       >
-        <Text  tabLabel='Assessments'>
+        <View  tabLabel='Assessments'>
           <Assessment/>
-        </Text>
-        <Text tabLabel='Organisational Tree'>
+        </View>
+        <View tabLabel='Organisational Tree'>
           <OrganisationalTree/>
-        </Text>
+        </View>
       
       </ScrollableTabView>
     );

@@ -44,6 +44,7 @@ export default class Header extends React.Component {
                 .then((responseJson)=>{
                     var json=responseJson[0];
                     console.log(json.Photo);
+                    this.saveUserID(json.recordId);
                     this.setState({
                             isLoading:false,
                             image:responseJson[0].Photo,
@@ -55,6 +56,16 @@ export default class Header extends React.Component {
         }
         this.hideProgress();
     }
+    saveUserID = async userId =>{
+        try{
+          await AsyncStorage.setItem('recordId',userId);
+          console.log(await AsyncStorage.getItem('recordId'))
+         
+        }catch(error){
+            console.error(error);
+  
+        }
+      }
   render() {
     return (
      <ImageBackground style={styles.headerbackground} source={require('../images/visualbi_logo.png')}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View,Image,TouchableOpacity,BackHandler,Platform,Alert } from 'react-native';
 import Header from '../components/Header' 
 import Assessment from '../components/Assessment';
+import RNExitApp from 'react-native-exit-app';
 import BottomList from '../components/BottomList';
 
 
@@ -39,7 +40,8 @@ export default class Home extends React.Component {
       {
         text:'ok',
         onpress:()=>{
-          BackHandler.exitApp()
+          BackHandler.exitApp();
+          RNExitApp.exitApp();
         }
 
       }
