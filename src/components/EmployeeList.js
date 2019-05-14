@@ -6,64 +6,7 @@ export default class EmployeeList extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      data:[
-        {
-          "recordId": "249048000000058742",
-          "employeeLname": "Kesavan",
-          "employeeFname": "Kavitha",
-          "employeeId": "VBI10054",
-          "employemailId": "kavithak@visualbi.com",
-          "reportingTo": "249048000000917199"
-        },
-        {
-          "recordId": "249048000004459913",
-          "employeeLname": "Mohanasundaram",
-          "employeeFname": "Srikkanth",
-          "employeeId": "VBI10234",
-          "employemailId": "srikkanthm@visualbi.com",
-          "reportingTo": "249048000000917199"
-        },
-        {
-          "recordId": "249048000005094211",
-          "employeeLname": "Gudimallam",
-          "employeeFname": "YogendraBabu",
-          "employeeId": "VBI10241",
-          "employemailId": "yogendrabg@visualbi.com",
-          "reportingTo": "249048000000917199"
-        },
-        {
-          "recordId": "249048000007354261",
-          "employeeLname": "Selvaraj",
-          "employeeFname": "Suganya",
-          "employeeId": "VBI10267",
-          "employemailId": "suganyas@visualbi.com",
-          "reportingTo": "249048000000917199"
-        },
-        {
-          "recordId": "249048000007677949",
-          "employeeLname": "R V Lakshmanan",
-          "employeeFname": "Dinesh",
-          "employeeId": "VBI10273",
-          "employemailId": "dineshrvl@visualbi.com",
-          "reportingTo": "249048000000917199"
-        },
-        {
-          "recordId": "249048000009838707",
-          "employeeLname": "Durairaj",
-          "employeeFname": "Mohan Raj",
-          "employeeId": "VBI10294",
-          "employemailId": "mohanrd@visualbi.com",
-          "reportingTo": "249048000000917199"
-        },
-        {
-          "recordId": "249048000010180581",
-          "employeeLname": "Mohamed",
-          "employeeFname": "Mahadeer",
-          "employeeId": "VBI10303",
-          "employemailId": "mahadeerm@visualbi.com",
-          "reportingTo": "249048000000917199"
-        }
-      ]
+      data:[]
     }
   }
 

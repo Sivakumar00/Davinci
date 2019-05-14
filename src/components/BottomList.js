@@ -18,7 +18,7 @@ export default class BottomList extends React.Component {
         <View  tabLabel='Assessments'>
           <Assessment/>
         </View>
-        <View tabLabel='Organisational Tree'>
+        <View tabLabel='Sub-Ordinates'>
           <OrganisationalTree/>
         </View>
       
@@ -29,7 +29,7 @@ export default class BottomList extends React.Component {
 const styles = StyleSheet.create({
   tab:{
     flexGrow:1,
-    height:'80%',
+    
     alignItems:'flex-start'
   }
 })

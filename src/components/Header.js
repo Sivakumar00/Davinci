@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View ,Image,ImageBackground,AsyncStorage,ActivityIndicator} from 'react-native';
+import { db } from '../config/db';
 
 
 export default class Header extends React.Component {
@@ -33,6 +34,7 @@ export default class Header extends React.Component {
 
         var value = await AsyncStorage.getItem('user');
         var userEmail = await AsyncStorage.getItem('userEmail');
+        
         if(value !== null){
             console.log("user id :"+value);
             this.setState({userId:value});
@@ -44,6 +46,8 @@ export default class Header extends React.Component {
                 .then((responseJson)=>{
                     var json=responseJson[0];
                     console.log(json.Photo);
+
+                   
                     this.saveUserID(json.recordId);
                     this.setState({
                             isLoading:false,
@@ -51,6 +55,27 @@ export default class Header extends React.Component {
                             username:json['First Name'],
                             position:responseJson[0].Title      
                         }) 
+
+                    var storeData = {
+                        userEmail:this.state.userEmail,
+                        userName:this.state.username,
+                        userPosition:this.state.position,
+                        userPhoto:json.Photo,
+                        
+                        
+
+                    }
+                    db.ref('/Users/'+json.recordId).once('value',function(snapshot){
+                        if(!snapshot.exists()){
+                            db.ref('/Users/'+json.recordId).set(storeData)
+                            .then((data)=>{
+                                console.log("Data inserted ..!")
+                            }).catch((error)=>{
+                                console.error(error)
+                            })
+                        }
+                    })
+                   
                 })
             
         }
@@ -60,7 +85,7 @@ export default class Header extends React.Component {
         try{
           await AsyncStorage.setItem('recordId',userId);
           console.log(await AsyncStorage.getItem('recordId'))
-         
+
         }catch(error){
             console.error(error);
   

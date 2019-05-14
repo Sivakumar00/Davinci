@@ -17,7 +17,6 @@
     "react-native-router-flux": "^4.0.6",
     "react-native-scrollable-tab-view": "^0.10.0",
     "react-native-simple-dialogs": "^1.1.0",
-    "react-native-snap-carousel": "^3.7.5",
     "react-native-tab-view": "^2.2.0",
     "react-navigation": "^3.9.1",
     "react-navigation-drawer": "^1.2.1"
