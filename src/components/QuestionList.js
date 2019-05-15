@@ -4,6 +4,7 @@ import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 
 import { FlatList } from 'react-native-gesture-handler';
+import { Actions } from 'react-native-router-flux';
 
 export default class QuestionList extends React.Component {
 
@@ -26,27 +27,40 @@ export default class QuestionList extends React.Component {
          visible:false
        }
     }
-    _loadInitialState = async() =>{
-         AsyncStorage.getItem('isAdmin')
-         .then((value)=>{
-           this.setState({isAdmin:value})  
-         })
-    }
-     
    componentWillMount(){
-       this._loadInitialState();
-       
-       
-       
   
+   }
+     
+   componentDidMount(){
+    const setState = this.setState.bind(this)
+     
+    AsyncStorage.getItem('recordId').then((recordId)=>{
+      db.ref('Users/').once('value',function(snapshot){
+        var getValue = snapshot.child(recordId).child('isAdmin').val();
+        console.log("DB value: "+recordId+"  ===> " +getValue);
+        if(getValue){
+          setState({isAdmin:true})  
+        }else{ 
+          setState({isAdmin:false})  
+        }
+        
+    })
+    })
+        // AsyncStorage.getItem('isAdmin')
+        //   .then((value)=>{
+        //     setState({isAdmin:value})  
+        //   })
+        //   .catch(e => console.log("=======", e))
+        // console.log('did mount :'+this.state.isAdmin);
+      
     }
   
    
     addBtnClick(){
-
+      Actions.Question();
     }
     render() {
-    
+      console.log('render triggred', this.state.isAdmin)
       return (
        <View style={styles.container}>
         <FlatList

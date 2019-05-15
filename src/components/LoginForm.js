@@ -25,30 +25,16 @@ export default class Logo extends React.Component {
     componentDidMount(){
         this._loadInitialState().done();
     }
+    
+   
     _loadInitialState= async()=>{
         var value = await AsyncStorage.getItem('user');
-        var isAdmin;
         if(value !== null){
-            AsyncStorage.getItem('recordId')
-                .then((value) =>{
-                    this.setState({recordId:value})
-                    db.ref('Users/').once('value',function(snapshot){
-                    console.log("ADFadf " +snapshot.child(value).child('isAdmin').val());
-                    if(snapshot.child(value).child('isAdmin').exists() && snapshot.child(value).child('isAdmin').val()===true){
-                       isAdmin = true;
-                    }else{
-                        isAdmin = false;
-                    }
-                })
-                
             
-             })
             Actions.home();
         }
 
-        if(isAdmin){
-            await AsyncStorage.setItem('isAdmin',isAdmin);
-        }
+       
         this.hideProgress();
     }
      saveUserID = async userId =>{

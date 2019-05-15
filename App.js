@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet  , View ,StatusBar} from 'react-native';
-
+import { StyleSheet,AsyncStorage  , View ,StatusBar} from 'react-native';
+import { db } from './src/config/db';
 
 import Routes from './src/Routes';
 export default class App extends React.Component {
@@ -9,6 +9,7 @@ export default class App extends React.Component {
               <Routes />    
     );
   }
+
 }
 
 const styles = StyleSheet.create({

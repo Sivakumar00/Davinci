@@ -61,10 +61,10 @@ export default class Header extends React.Component {
                         userName:this.state.username,
                         userPosition:this.state.position,
                         userPhoto:json.Photo,
-                        
-                        
-
                     }
+
+                    AsyncStorage.setItem('recordId',json.recordId);
+
                     db.ref('/Users/'+json.recordId).once('value',function(snapshot){
                         if(!snapshot.exists()){
                             db.ref('/Users/'+json.recordId).set(storeData)
@@ -75,7 +75,7 @@ export default class Header extends React.Component {
                             })
                         }
                     })
-                   
+
                 })
             
         }
