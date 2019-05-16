@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet,Text, Image,TouchableOpacity, TouchableWithoutFeedback,Alert,AsyncStorage, View ,StatusBar} from 'react-native';
+import { StyleSheet,Text,ActivityIndicator, Image,TouchableOpacity, TouchableWithoutFeedback,Alert,AsyncStorage, View ,StatusBar} from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 
@@ -11,17 +11,8 @@ export default class QuestionList extends React.Component {
     constructor(props){
         super(props)
        this.state = {
-        data: [ 
-            { name: 'John', age: 18 }, 
-            { name: 'Lilli', age: 23 }, 
-            { name: 'Lavera', age: 46 }, 
-            { name: 'Paul', age: 32 }, 
-            { name: 'Jene', age: 14 }, 
-            { name: 'Felipe', age: 42 }, 
-            { name: 'Shawn', age: 26 }, 
-            { name: 'Carey', age: 24 }, 
-            { name: 'Mark', age: 33 } 
-          ],
+        data: [{ title: 'Assessment - 1', questions: 18 }, 
+       ],
           recordId:'',
           isAdmin:false,
          visible:false
@@ -63,21 +54,23 @@ export default class QuestionList extends React.Component {
       console.log('render triggred', this.state.isAdmin)
       return (
        <View style={styles.container}>
+        
         <FlatList
-          style={{  alignSelf: 'stretch',flexDirection: 'column',}}
+          style={{ height:'100%', alignSelf: 'stretch',flexDirection: 'column',}}
           extraData={this.state}
           data = {this.state.data}
           renderItem={({item}) =>
+         
          <TouchableWithoutFeedback 
             onPress={()=>this.itemClick(item)}
           >
           <View>
              <Card
                 containerStyle={{padding:5,borderRadius:10,backgroundColor:'white',shadowRadius:5}}
-                title={item.name}
+                title={item.title}
                 titleStyle={{fontSize:18}}>
               <Text style={styles.item}>
-                  {item.age}
+                  {item.questions}
               </Text>
              </Card>
           </View>

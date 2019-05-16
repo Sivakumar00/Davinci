@@ -20,6 +20,7 @@
     "react-native-tab-view": "^2.2.0",
     "react-navigation": "^3.9.1",
     "react-navigation-drawer": "^1.2.1"
+  
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"
