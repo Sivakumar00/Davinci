@@ -29,27 +29,10 @@ export default class Home extends React.Component {
   }
 
   handleBackButton = () =>{
-    Alert.alert(
-      'Exit app',
-      'Are you sure to exit app?',
-      [{
-        text:'cancel',
-        onpress:()=>console.log("cancel"),
-        style:'cancel'
-      },
-      {
-        text:'ok',
-        onpress:()=>{
-          BackHandler.exitApp();
-          RNExitApp.exitApp();
-        }
-
-      }
-      ],{
-        cancelable:false
-      }
-    )
-    return true;
+    
+    BackHandler.exitApp();
+    RNExitApp.exitApp();
+    
   }
 
   componentWillUnmount(){

@@ -11,8 +11,7 @@ export default class QuestionList extends React.Component {
     constructor(props){
         super(props)
        this.state = {
-        data: [{ title: 'Assessment - 1', questions: 18 }, 
-       ],
+          data: [],
           recordId:'',
           isAdmin:false,
          visible:false
@@ -24,7 +23,7 @@ export default class QuestionList extends React.Component {
      
    componentDidMount(){
     const setState = this.setState.bind(this)
-     
+    var tempArr =this.state.data;
     AsyncStorage.getItem('recordId').then((recordId)=>{
       db.ref('Users/').once('value',function(snapshot){
         var getValue = snapshot.child(recordId).child('isAdmin').val();
@@ -37,13 +36,20 @@ export default class QuestionList extends React.Component {
         
     })
     })
-        // AsyncStorage.getItem('isAdmin')
-        //   .then((value)=>{
-        //     setState({isAdmin:value})  
-        //   })
-        //   .catch(e => console.log("=======", e))
-        // console.log('did mount :'+this.state.isAdmin);
-      
+
+    //getting the created assessments
+    
+      db.ref('Questions').once('value',function(snapshot){
+
+       snapshot.forEach(function(childSnapshot){
+         childSnapshot.forEach(function(_childSnapshot){
+           //console.log("value "+JSON.stringify(_childSnapshot.val()));
+          tempArr.push(_childSnapshot.val())
+         })
+       })
+
+      })
+      setState({data:tempArr})
     }
   
    
@@ -51,12 +57,12 @@ export default class QuestionList extends React.Component {
       Actions.Question();
     }
     render() {
-      console.log('render triggred', this.state.isAdmin)
+      console.log('render triggred', JSON.stringify(this.state.data))
       return (
        <View style={styles.container}>
         
         <FlatList
-          style={{ height:'100%', alignSelf: 'stretch',flexDirection: 'column',}}
+          style={{ height:'100%',marginBottom:10, alignSelf: 'stretch',flexDirection: 'column',}}
           extraData={this.state}
           data = {this.state.data}
           renderItem={({item}) =>
@@ -70,7 +76,7 @@ export default class QuestionList extends React.Component {
                 title={item.title}
                 titleStyle={{fontSize:18}}>
               <Text style={styles.item}>
-                  {item.questions}
+                  {item.fromdate} - {item.todate}
               </Text>
              </Card>
           </View>

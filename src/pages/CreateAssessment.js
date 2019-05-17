@@ -1,7 +1,12 @@
 import React from 'react';
-import { StyleSheet,AsyncStorage,BackAndroid,FlatList, TouchableOpacity,TextInput,Text,View ,StatusBar} from 'react-native';
+import { StyleSheet,TouchableWithoutFeedback,AsyncStorage,BackHandler, TouchableOpacity,TextInput,Text,View ,StatusBar} from 'react-native';
 import {db} from '../config/db'
+import { Card } from 'react-native-elements';
+import { FlatList } from 'react-native-gesture-handler';
+
 import { Actions } from 'react-native-router-flux';
+import DatePicker from 'react-native-datepicker';
+
 export default class CreateAssessment extends React.Component {
 
   constructor(props){
@@ -10,7 +15,10 @@ export default class CreateAssessment extends React.Component {
           title:'',
           question:'',
           data:{},
+          fromdate:'',
+          todate:'',
           buttontext:'Confirm',
+          datepickerview:true,
           finishBtn:false,
           questioncount:0,
           questions:[],
@@ -23,11 +31,11 @@ export default class CreateAssessment extends React.Component {
 
   }
   componentDidMount(){
-    BackAndroid.addEventListener('hardwareBackPress', this.onBackPress.bind(this));
+    BackHandler.addEventListener('hardwareBackPress', this.onBackPress.bind(this));
     }
   
   onBackPress(){
-    Actions.home();
+    Actions.reset('home');
   }
   addBtnClick()
   {
@@ -38,7 +46,8 @@ export default class CreateAssessment extends React.Component {
         this.setState({finishBtn:true})
       }
       if( btnState === 'Confirm'){
-          if(this.state.title !== ''){
+          if(this.state.title !== '' && this.state.fromdate !=='' && this.state.todate !== ''){
+            this.setState({datepickerview:false})
             this.setState({gettext:''})
             this.setState({steptext:'Step 2: Add Questions'})
             this.setState({buttontext:'Add Question'})
@@ -54,10 +63,11 @@ export default class CreateAssessment extends React.Component {
             let questions = this.state.questions;
             var singleQue = {
                 question:this.state.question,
-                answer:'',
-                rating:'',
+                comments:'',
+                rating:''
             }
             questions.push(singleQue);
+            this.setState({question:''})
             this.setState({questions:questions},()=>{console.log(this.state.questions)});
             this.setState({gettext:''})
           }else{
@@ -72,6 +82,8 @@ export default class CreateAssessment extends React.Component {
       if(this.state.questions !== []){
         var toBeSaved = {
             title:this.state.title,
+            fromdate:this.state.fromdate,
+            todate:this.state.todate,
             questions:this.state.questions
         }
         console.log(JSON.stringify(toBeSaved));
@@ -107,6 +119,49 @@ export default class CreateAssessment extends React.Component {
                     }}
                     value={this.state.gettext}
                     ></TextInput>
+                   {this.state.datepickerview ? <DatePicker
+                        style={{width: 300,alignSelf:'center'}}
+                        date={this.state.fromdate} //initial date from state
+                        mode="date" //The enum of date, datetime and time
+                        placeholder="Date From"
+                        format="DD-MM-YYYY"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        customStyles={{
+                          dateIcon: {
+                            position: 'absolute',
+                            left: 0,
+                            top: 4,
+                            marginLeft: 0
+                          },
+                          dateInput: {
+                            marginLeft: 36,
+                          }
+                        }}
+                        onDateChange={(date) => {this.setState({fromdate: date})}}
+                      />:null}
+                      {this.state.datepickerview ? <DatePicker
+                        style={{ width:300,
+                          marginTop:10,alignSelf:'center'}}
+                        date={this.state.todate} //initial date from state
+                        mode="date" //The enum of date, datetime and time
+                        placeholder="Date To"
+                        format="DD-MM-YYYY"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        customStyles={{
+                          dateIcon: {
+                            position: 'absolute',
+                            left: 0,
+                            top: 4,
+                            marginLeft: 0
+                          },
+                          dateInput: {
+                            marginLeft: 36,
+                          }
+                        }}
+                        onDateChange={(date) => {this.setState({todate: date})}}
+                      />:null}
                 <TouchableOpacity style={styles.button} onPress={this.addBtnClick}>
                      <Text style={styles.buttontext}>{this.state.buttontext}</Text>
                 </TouchableOpacity>
@@ -115,7 +170,33 @@ export default class CreateAssessment extends React.Component {
                      <Text style={styles.buttontext}>Finish</Text>
                 </TouchableOpacity> :null}
 
-            
+                <View style={{flex:1}}>
+                <Text style={{color:'white',fontSize:15,padding:5,justifyContent:'center',backgroundColor:'#37474f',marginTop:10,textAlign:'center',alignContent:'center', borderColor:'white',width:'100%'}}>Questions Added</Text>
+                <FlatList
+                  style={{ height:'100%', alignSelf: 'stretch',flexDirection: 'column',}}
+                  extraData={this.state}
+                  data = {this.state.questions}
+                  scrollEnabled={true}
+                  renderItem={({item,index}) =>
+                
+                <TouchableWithoutFeedback 
+                    onPress={()=>this.itemClick(item)}
+                  >
+                  <View>
+                    <Card
+                        containerStyle={{padding:5,borderRadius:10,backgroundColor:'white',shadowRadius:5}}
+                        title={''+(index+1)}
+                        titleStyle={{fontSize:18}}>
+                      <Text style={styles.item}>
+                          {item.question}
+                      </Text>
+                    </Card>
+                  </View>
+                </TouchableWithoutFeedback > 
+                }
+              
+                />
+              </View>
           
             </View>
     );
@@ -135,7 +216,7 @@ const styles = StyleSheet.create({
       fontSize:24,
       fontWeight:'bold',
       color:'#fff',
-      marginTop:20,
+      marginTop:100,
       
   },
   inputbox:{
@@ -168,7 +249,9 @@ const styles = StyleSheet.create({
   },
   item:{
     color:'#000', 
-    fontSize:15,
+    fontSize:20,
+    padding:10,
+    fontWeight:'bold',
     textAlign: 'center',
 }
 });

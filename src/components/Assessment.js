@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet,Text, Image, AsyncStorage, TouchableOpacity,Alert, View ,StatusBar} from 'react-native';
 import { db } from '../config/db';
-import QuestionList from './QuestionList';
+import QuestionList from './QuestionList'; 
 
 
 export default class Assessment extends React.Component {
