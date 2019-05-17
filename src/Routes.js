@@ -1,24 +1,48 @@
 import React,{Component} from 'react';
-import {Router, Stack, Scene} from 'react-native-router-flux'; 
+import {BackHandler} from 'react-native';
+import {Router, Stack, Scene,Reducer,Actions} from 'react-native-router-flux'; 
 
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Home from './pages/Home'
 import CreateAssessment from './pages/CreateAssessment'
 
+const reducerCreate = params => {
+
+    const defaultReducer = new Reducer(params);
+  
+    return (state, action) => {
+      // Open this up in your console of choice and dive into this action variable
+      console.log('ACTION:', action);
+      // Add some lines like this to grab the action you want
+      if(action.type === 'Navigation/BACK' && state.index === 0){
+        BackHandler.exitApp()
+      }
+      return defaultReducer(state, action);
+    };
+  };
+  
 export default class Routes extends React.Component{
     render(){
         return(
-            <Router>
+        <Router
+            backAndroidHandler={this.onBackPress}
+            createReducer={reducerCreate}>
               <Stack key="root" hideNavBar={true }>
                     <Scene key="login" component={Login} title="Login" initial={true}/>
                     <Scene key="signup" component={SignUp} title="Register"/>
                     <Scene key="home" component={Home} title="Home" />
-                    <Scene key="Question" component = {CreateAssessment} title="Create Assessment" />
+                    <Scene key="Question" component = {CreateAssessment} title="Create Assessment" back={true} />
                     
                 </Stack>
             </Router>
         )
     }
-    
+    onBackPress() {
+        if (Actions.state.index === 0) {
+          return false
+        }
+        Actions.pop()
+        return true
+      }
 }

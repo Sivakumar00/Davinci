@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet,Text,ActivityIndicator, Image,TouchableOpacity, TouchableWithoutFeedback,Alert,AsyncStorage, View ,StatusBar} from 'react-native';
+import { StyleSheet,Text,ActivityIndicator,RefreshControl, Image,TouchableOpacity, TouchableWithoutFeedback,Alert,AsyncStorage, View ,StatusBar} from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 
@@ -14,13 +14,17 @@ export default class QuestionList extends React.Component {
           data: [],
           recordId:'',
           isAdmin:false,
-         visible:false
+         visible:false,
+         isRefreshing:true,
        }
     }
    componentWillMount(){
   
    }
-     
+   onRefresh() {
+    this.setState({ data: [] });
+    this.getData();
+  }
    componentDidMount(){
     const setState = this.setState.bind(this)
     var tempArr =this.state.data;
@@ -38,25 +42,34 @@ export default class QuestionList extends React.Component {
     })
 
     //getting the created assessments
-    
-      db.ref('Questions').once('value',function(snapshot){
+    this.getData()
 
-       snapshot.forEach(function(childSnapshot){
-         childSnapshot.forEach(function(_childSnapshot){
-           //console.log("value "+JSON.stringify(_childSnapshot.val()));
-          tempArr.push(_childSnapshot.val())
-         })
-       })
-
-      })
-      setState({data:tempArr})
     }
+    
+    getData(){
+
+      const setState = this.setState.bind(this)
+      var tempArr =this.state.data;
   
+      db.ref('Questions').on('value',function(snapshot){
+
+        snapshot.forEach(function(childSnapshot){
+          childSnapshot.forEach(function(_childSnapshot){
+            //console.log("value "+JSON.stringify(_childSnapshot.val()));
+           tempArr.push(_childSnapshot.val())
+          })
+        })
+ 
+       })
+       setState({isRefreshing:false})
+       setState({data:tempArr})
+    }
    
     addBtnClick(){
       Actions.Question();
     }
     render() {
+
       console.log('render triggred', JSON.stringify(this.state.data))
       return (
        <View style={styles.container}>

@@ -1,14 +1,19 @@
 import React from 'react';
-import { StyleSheet, Text, View,Image,TouchableOpacity,BackHandler,Platform,Alert } from 'react-native';
+import { StyleSheet,NetInfo,Dimensions, Text, View,Image,TouchableOpacity,BackHandler,Platform,Alert } from 'react-native';
 import Header from '../components/Header' 
 import Assessment from '../components/Assessment';
 import RNExitApp from 'react-native-exit-app';
 import BottomList from '../components/BottomList';
+import { Actions } from 'react-native-router-flux';
+const { width } = Dimensions.get('window');
 
 
 export default class Home extends React.Component {
   constructor(props){
     super(props)
+    this.state = {
+      isConnected:true
+    }
     this.handleBackButton= this.handleBackButton.bind(this);
   }
 
@@ -17,29 +22,47 @@ export default class Home extends React.Component {
       <View style={styles.container}>
          
             <Header/>
+            {!this.state.isConnected?
+                <View style={styles.offlineContainer}>
+                <Text style={styles.offlineText}>No Internet Connection</Text>
+              </View>:null}
             <BottomList/>
       </View>
     );
   }
   
   componentDidMount(){
-    if(Platform.OS=='android'){
       BackHandler.addEventListener('hardwareBackPress',this.handleBackButton);
-    }
+      NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
   }
 
   handleBackButton = () =>{
     
+    if (Actions.state.index === 0) {
+      return false
+    }
     BackHandler.exitApp();
-    RNExitApp.exitApp();
     
+    return true
   }
 
+  
+  handleConnectivityChange = isConnected => {
+    if (isConnected) {
+      this.setState({ isConnected });
+    } else {
+      this.setState({ isConnected });
+    }
+  }
   componentWillUnmount(){
     BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton);
+    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+
   }
 
 }
+
+
 const styles = StyleSheet.create({
   container:{
     backgroundColor:'#455a64',
@@ -77,6 +100,18 @@ const styles = StyleSheet.create({
     fontSize:16,
     marginBottom:8,
     color:'white'
-  }
+  },
+  
+  offlineContainer: {
+    backgroundColor: '#b52424',
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    width,
+    position: 'absolute',
+    top: 30
+  },
+  offlineText: { color: '#fff' }
 });
 
