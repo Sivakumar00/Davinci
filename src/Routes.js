@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Home from './pages/Home'
 import CreateAssessment from './pages/CreateAssessment'
+import Review from './pages/Review';
 
 const reducerCreate = params => {
 
@@ -13,7 +14,7 @@ const reducerCreate = params => {
   
     return (state, action) => {
       // Open this up in your console of choice and dive into this action variable
-      console.log('ACTION:', action);
+     // console.log('ACTION:', action);
       // Add some lines like this to grab the action you want
       if(action.type === 'Navigation/BACK' && state.index === 0){
         BackHandler.exitApp()
@@ -33,7 +34,7 @@ export default class Routes extends React.Component{
                     <Scene key="signup" component={SignUp} title="Register"/>
                     <Scene key="home" component={Home} title="Home" />
                     <Scene key="Question" component = {CreateAssessment} title="Create Assessment" back={true} />
-                    
+                    <Scene key="review" component = {Review} title = "Review" back={true}/>
                 </Stack>
             </Router>
         )
