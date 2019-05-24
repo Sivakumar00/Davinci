@@ -1,9 +1,11 @@
 import React from 'react';
-import { StyleSheet,TextInput, Dimensions, TouchableOpacity,KeyboardAvoidingView, NetInfo, BackHandler, ImageBackground, Image, ActivityIndicator, AsyncStorage, Text, View, StatusBar } from 'react-native';
+import { StyleSheet,TextInput,Keyboard, Dimensions, TouchableOpacity,KeyboardAvoidingView, NetInfo, BackHandler, ImageBackground, Image, ActivityIndicator, AsyncStorage, Text, View, StatusBar } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
+import SideSwipe from 'react-native-sideswipe';
 import { Card } from 'react-native-elements';
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
+import { PagerDotIndicator, IndicatorViewPager} from 'rn-viewpager';
 
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
 
@@ -33,6 +35,14 @@ export default class Review extends React.Component {
             startdate: '',
             enddate: '',
             key: '',
+            height:0,
+            rating:0,
+            comments:'',
+            snapPosition:0,
+            headerheight:true,
+            response:[],
+            rightBtnVisible:true,
+            currentIndex:0,
             slider1ActiveSlide: SLIDER_1_FIRST_ITEM,
             employeeName: '',
             image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/768px-Circle-icons-profile.svg.png',
@@ -57,12 +67,32 @@ export default class Review extends React.Component {
         this._loadInit();
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
         NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+        this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    
     }
 
     componentWillUnmount() {
         BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
         NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+        this.keyboardDidShowListener.remove();
+        this.keyboardDidHideListener.remove();
+    
     }
+
+    _keyboardDidShow =()=> {
+        const setState = this.setState.bind(this);
+        setState({headerheight:false},function(){
+            console.log(this.state.headerheight)
+        })
+      }
+    
+      _keyboardDidHide =()=> {
+        const setState = this.setState.bind(this);
+        setState({headerheight:true},function(){
+            console.log(this.state.headerheight)
+        })
+      }
     //back handler methods
     handleBackButton = () => {
 
@@ -139,87 +169,147 @@ export default class Review extends React.Component {
         })
 
     }
-
+    _renderDotIndicator() {
+        return <PagerDotIndicator />;
+    }
     render() {
         const { slider1ActiveSlide } = this.state;
-
+        const { width } = Dimensions.get('window');
+        const contentOffset = (width - 250) / 2;
+    
         return (
-            <View style={styles.container}>
-                <ImageBackground style={styles.headerbackground} source={require('../images/visualbi_logo.png')}>
+            
+            <View
+                style={styles.container}
+                >
+                    {this.state.headerheight?
                     <View style={styles.header}>
                         <View style={styles.profilePicWrap}>
                             <Image style={styles.profilepic} source={{ uri: this.state.image }}></Image>
                         </View>
+                        <View style={{flexDirection:'column'}}>
+                            <Text style={styles.name}>{this.state.name}</Text>
+                            <Text style={styles.position}>{"Attendance : " + this.state.present + " days"}</Text>
+                            <ActivityIndicator animating={this.state.showProgress} />
+                        </View>
+                    </View>:null}
+                <View style={{flex:1,height:450}}>
+                        {/* <Carousel
+                            ref={c => this._slider1Ref = c}
+                            data={this.state.questions}                            
+                            sliderWidth={sliderWidth}
+                            itemWidth={itemWidth}
+                            itemHeight={400}
+                            style={{height:400}}
+                            firstItem={SLIDER_1_FIRST_ITEM}
+                            inactiveSlideScale={0.94}
+                            inactiveSlideOpacity={0.7}
+                            containerCustomStyle={styles.slider}
+                            enableSnap={false}
+                            contentContainerCustomStyle={styles.sliderContentContainer}
+                            loop={false}
+                            layout={"tinder"}
+                            layoutCardOffset={18} 
+                            onSnapToItem={(index) => {this.setState({ slider1ActiveSlide: index })
+                                console.log(index+" onSnap ")
+                            } }
+    
+                            renderItem={({item,index})=> */}
+                            <IndicatorViewPager
+                                ref={viewPager => { this.viewPager = viewPager; }}
+                                style={{height:450,width:'90%',margin:20}}
+                                scrollEnabled={false}
+                                horizontalScroll={false}
+                                indicator={this._renderDotIndicator()}
+                                
+                                >
+                                {this.state.questions.map((item,index)=>
+                                    <View style={{flex:1}}>
+                                    <Card
+                                        containerStyle={{height:330, padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
+                                        title={(index+1)+") "+item.question}
+                                        titleStyle={{ fontSize: 19 }}>
+    
+                                        <Text style={{fontSize:14, textAlign:'center', fontStyle:'italic',color:colors.gray}}>
+                                            Star Rating for the Question
+                                        </Text>
+                                        <AirbnbRating 
+                                            defaultRating={0}
+                                            reviews={["1/5","2/5","3/5","4/5","5/5"]}
+                                            onFinishRating={(rating)=>{
+                                                this.setState({
+                                                    rating:rating
+                                                })
+                                            }}
+                                        />
+                                        
+                                        <TextInput 
+                                            underlineColorAndroid='transparent' 
+                                            placeholder='Comments (Optional)' 
+                                            placeholderTextColor={colors.gray}
+                                            multiline = {true}
+                                            pointerEvents='none'
+                                            numberOfLines = {4}
+                                            onContentSizeChange={(event) => 
+                                                this.setState({ height:event.nativeEvent.contentSize.height})
+                                            }
+                                            style={[styles.inputbox, {
+                                              height:100
+                                            }]}        
+                                            onChangeText={(text)=>{
+                                               // console.log(text)
+                                               this.setState({
+                                                   comments:text
+                                               })
+                                            }}
+                                          />
+                                
+    
+                                    </Card>
+                                </View>
+    
+                                )}
+                            </IndicatorViewPager>
 
-                        <Text style={styles.name}>{this.state.name}</Text>
-                        <Text style={styles.position}>{"Attendance : " + this.state.present + " days for given time range"}</Text>
-                        <ActivityIndicator animating={this.state.showProgress} />
-                    </View>
-                </ImageBackground>
-                <View style={{flex:1}}>
-                    <Carousel
-                        ref={c => this._slider1Ref = c}
-                        data={this.state.questions}
-                        renderItem={({item,index})=>
-                            <View>
-                                <Card
-                                    containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
-                                    title={(index+1)+") "+item.question}
-                                    titleStyle={{ fontSize: 19 }}>
-                                    <Text style={{fontSize:14, textAlign:'center', fontStyle:'italic',color:colors.gray}}>
-                                        Star Rating for the Question
-                                    </Text>
-                                    <Rating
-                                        showRating
-                                        onFinishRating={this.ratingCompleted}
-                                        style={{ paddingVertical: 10 }}
-                                    />
-                                    <TextInput 
-                                        style={styles.inputbox}
-                                        underlineColorAndroid='transparent' 
-                                        placeholder='Comments (Optional)' 
-                                        placeholderTextColor={colors.gray}
-                                        multiline = {true}
-                                        numberOfLines = {4}
-                                        onChangeText={(text)=>{
-                                            console.log(text)
-                                        }}
-                                    />
+                  
+                </View >
+                <View style={{alignItems:'center',justifyContent:'center' ,flexDirection:'row',marginTop:60,marginBottom:30}}>
+                {this.state.snapPosition?<TouchableOpacity style ={{width:60,height:60,backgroundColor:'transparent',marginRight:30}} 
+                        onPress={()=>{
+                            if(this.state.snapPosition > 0){
+                                
+                                var position =  this.state.snapPosition - 1;
+                                this.viewPager.setPage(position)
+                                this.setState({snapPosition:position,rightBtnVisible:true},function(){
+                                    console.log("moved: "+this.state.snapPosition)
+                                })
+                            }  else if(this.state.snapPosition){
 
+                            } 
+                        }} > 
 
-                                </Card>
-                            </View>
-                        }
-                        sliderWidth={sliderWidth}
-                        itemWidth={itemWidth}
-                        style={{height:300}}
-                        firstItem={SLIDER_1_FIRST_ITEM}
-                        inactiveSlideScale={0.94}
-                        inactiveSlideOpacity={0.7}
-                        containerCustomStyle={styles.slider}
-                        contentContainerCustomStyle={styles.sliderContentContainer}
-                        loop={false}
-                        layout={"tinder"}
-                        layoutCardOffset={18} 
-                        onSnapToItem={(index) => {this.setState({ slider1ActiveSlide: index })
-                            console.log(index+" onSnap ")
-                        } }
-                    />
-                    <Pagination
-                    dotsLength={this.state.questions.length}
-                    activeDotIndex={slider1ActiveSlide}
-                    containerStyle={styles.paginationContainer}
-                    dotColor={'rgba(255, 255, 255, 0.92)'}
-                    dotStyle={styles.paginationDot}
-                    inactiveDotColor={colors.black}
-                    inactiveDotOpacity={0.4}
-                    inactiveDotScale={0.6}
-                    carouselRef={this._slider1Ref}
-                    tappableDots={!!this._slider1Ref}
-                    />
-                    
-                </View>
-                <TouchableOpacity style ={{backgroundColor:'#1e88e5',paddingLeft:20,paddingTop:10,paddingBottom:10, borderRadius:30,marginBottom:10,marginTop:30,marginLeft:20,marginRight:20}} onPress={this.reSubmitQues} >
+                        <Image style={{height:60,width:60}} source={require('../images/left-arrow.png')}></Image>
+                </TouchableOpacity>:null}
+
+                {this.state.rightBtnVisible?
+                <TouchableOpacity style ={{width:60,height:60,backgroundColor:'transparent',marginLeft:30}} 
+                        onPress={()=>{
+                            if(this.state.snapPosition === this.state.questions.length - 1){
+                                this.setState({rightBtnVisible:false})
+                            }else if(this.state.snapPosition >=0 && this.state.snapPosition< this.state.questions.length){
+                                
+                                var position =  this.state.snapPosition + 1;
+                                this.setState({snapPosition:position},function(){
+                                    this.viewPager.setPage(position)
+                                    console.log("moved: "+this.state.snapPosition)
+                                })
+
+                            }
+                        }} >
+                        <Image style={{height:60,width:60}} source={require('../images/right-arrow.png')}></Image>
+                </TouchableOpacity>:null}
+                </View> 
+                <TouchableOpacity style ={{backgroundColor:'#1e88e5',paddingLeft:20,paddingTop:10,paddingBottom:10, borderRadius:30,marginBottom:10,marginTop:30,marginLeft:20,marginRight:20}} >
                     <Text style={{color:'#fff',textAlign:'center'}}>Finish</Text>
                 </TouchableOpacity>
             </View>
@@ -233,27 +323,28 @@ const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
         backgroundColor: '#455a64',
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     headerbackground: {
         flex: 1,
         width: null,
-        maxHeight: 200,
+        maxHeight: 100,
         alignSelf: 'stretch'
     },
     header: {
         alignItems: 'center',
         padding: 20,
-        maxHeight: 200,
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        flexDirection:'row'
     },
     profilePicWrap: {
-        width: 100,
-        height: 100,
-        marginTop: 10,
+        width: 75,
+        height: 75,
         borderRadius: 100,
         borderColor: 'rgba(0,0,0,0.4)',
-        borderWidth: 16,
+        marginRight:10,
+        marginTop:10,
+        borderWidth: 5,
     },
     profilepic: {
         flex: 1,
@@ -294,8 +385,7 @@ const styles = StyleSheet.create({
     inputbox:{
         width:'100%',
         alignSelf:'center',
-        height:100,
-        borderRadius:12, 
+         borderRadius:12, 
         paddingLeft:20,
         paddingTop:8,
         paddingBottom:8,
