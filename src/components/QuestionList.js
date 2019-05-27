@@ -17,6 +17,7 @@ export default class QuestionList extends React.Component {
       isAdmin: false,
       visible: false,
       mydata: [],
+      reviewedList:[],
       isRefreshing: true,
       isModalVisible: false,
       assessmentItem:{},
@@ -114,6 +115,22 @@ export default class QuestionList extends React.Component {
       })
 
     })
+    var reviewedList = [];
+    console.log('record firebase '+this.state.recordId)
+    AsyncStorage.getItem('recordId').then((recordId)=>{
+      db.ref('Review').child(recordId).on('value',function(snapshot){
+       // console.log(JSON.stringify(snapshot.key))
+  
+        snapshot.forEach(function(childSnapshot){
+          reviewedList.push(childSnapshot.key)
+          setState({reviewedList},function(){
+            console.log(this.state.reviewedList)
+          })
+         // console.log(JSON.stringify(childSnapshot.key))
+        })
+      })
+     
+    })
     setState({ isRefreshing: false })
     setState({ data: tempArr })
     console.log(this.state.data)
@@ -166,6 +183,22 @@ export default class QuestionList extends React.Component {
       console.log("modal displayed..!")
       
     })
+  }
+  getColor=(item)=>{
+    var rec =  item.recordId;
+    var reviewedList = this.state.reviewedList;
+    var isReviewed =  false;
+    for(var i in reviewedList){
+      if(reviewedList[i] === rec) {
+        isReviewed =true;
+        break;
+      }
+    }
+    if(isReviewed){
+      return 'green'
+    }else{
+      return 'black'
+    }
   }
 
 
@@ -226,7 +259,7 @@ export default class QuestionList extends React.Component {
                 />
               }
               renderItem={({ item, index }) =>
-
+              
                 <TouchableWithoutFeedback
                   onPress={() => {
                     console.log(JSON.stringify(item))
@@ -239,7 +272,7 @@ export default class QuestionList extends React.Component {
                     <Card
                       containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
                       title={item.employeeFname +" "+item.employeeLname}
-                      titleStyle={{ fontSize: 18 }}>
+                      titleStyle={[styles.titleText,{color:this.getColor(item)}]}>
                       <Text style={styles.item}>
                         {item.employeeId}
                       </Text>
@@ -312,5 +345,10 @@ const styles = StyleSheet.create({
   fabIcon: {
     fontSize: 40,
     color: 'white'
+  },
+  titleText:{
+    color: '#000',
+    fontSize: 18,
+    textAlign: 'center',
   }
 });

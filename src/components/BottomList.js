@@ -4,7 +4,7 @@ import { Constants } from 'expo';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Assessment from './Assessment';
 import OrganisationalTree from './OrganisationTree';
-
+import MyReview from './MyReview'
 export default class BottomList extends React.Component {
   render() {
     return (
@@ -20,6 +20,9 @@ export default class BottomList extends React.Component {
         </View>
         <View tabLabel='Sub-Ordinates'>
           <OrganisationalTree/>
+        </View>
+        <View tabLabel='My Reviews'>
+          <MyReview/>
         </View>
       
       </ScrollableTabView>
