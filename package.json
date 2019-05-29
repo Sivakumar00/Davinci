@@ -1,32 +1,27 @@
 {
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "react-native start",
-    "android": "react-native run-android",
-    "ios": "react-native run-ios"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
   },
   "dependencies": {
+    "expo": "^32.0.0",
     "firebase": "^6.0.1",
     "json-bigint": "^0.3.0",
     "react": "16.5.0",
-    "react-native": "0.57.1",
-    "react-native-cli": "^2.0.1",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.1.0",
     "react-native-exit-app": "^1.0.0",
-    "react-native-modal": "^11.0.1",
-    "react-native-pull-to-refresh": "^2.1.3",
-    "react-native-ratings": "^6.3.1",
     "react-native-router-flux": "^4.0.6",
     "react-native-scrollable-tab-view": "^0.10.0",
-    "react-native-sideswipe": "^1.4.2",
     "react-native-simple-dialogs": "^1.1.0",
     "react-native-simple-toast": "0.0.8",
-    "react-native-snap-carousel": "^3.8.0",
     "react-native-tab-view": "^2.2.0",
     "react-navigation": "^3.9.1",
-    "react-navigation-drawer": "^1.2.1",
-    "rn-viewpager": "^1.2.9",
-    "@babel/runtime": "^7.0.0"
+    "react-navigation-drawer": "^1.2.1"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"
