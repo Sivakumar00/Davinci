@@ -19,6 +19,7 @@ export default class QuestionList extends React.Component {
       mydata: [],
       reviewedList:[],
       isRefreshing: true,
+      question_id:'',
       isModalVisible: false,
       assessmentItem:{},
     }
@@ -109,8 +110,8 @@ export default class QuestionList extends React.Component {
       snapshot.forEach(function (childSnapshot) {
         childSnapshot.forEach(function (_childSnapshot) {
           console.log(_childSnapshot.child('createdby').val());
-          console.log("value " + JSON.stringify(_childSnapshot.val()));
           tempArr.push(_childSnapshot.val())
+          console.log("value " + JSON.stringify(_childSnapshot.val()));
         })
       })
 
@@ -122,11 +123,13 @@ export default class QuestionList extends React.Component {
        // console.log(JSON.stringify(snapshot.key))
   
         snapshot.forEach(function(childSnapshot){
-          reviewedList.push(childSnapshot.key)
-          setState({reviewedList},function(){
-            console.log(this.state.reviewedList)
+          childSnapshot.forEach(function(_child){
+            reviewedList.push(childSnapshot.key+" "+_child.child('question_id').val())
+            setState({reviewedList},function(){
+              console.log("review /list :"+JSON.stringify(this.state.reviewedList))
+            })
           })
-         // console.log(JSON.stringify(childSnapshot.key))
+
         })
       })
      
@@ -156,7 +159,7 @@ export default class QuestionList extends React.Component {
               console.log("difference " + recordId.toString() + " " + rec_id)
               if (recordId.toString() === rec_id) {
                 db.ref('/Questions/' + rec_id + '/' + key).remove().then(function () {
-                  Toast.show('Assessment Removed ..! Swipe to refresh', Toast.LONG)
+                  Toast.show('Assessment Removed ..! Swipe to refresh')
                   //setState({isRefreshing:true})
                 }).catch((error) => {
                   console.log("ERROR " + error)
@@ -186,10 +189,16 @@ export default class QuestionList extends React.Component {
   }
   getColor=(item)=>{
     var rec =  item.recordId;
+    var key = this.state.assessmentItem.key
     var reviewedList = this.state.reviewedList;
     var isReviewed =  false;
     for(var i in reviewedList){
-      if(reviewedList[i] === rec) {
+      var rev = reviewedList[i];
+      var user = rev.substring(0,rev.indexOf(" ")).trim();
+      var _key =  rev.substring(rev.indexOf(" "),rev.length).trim()
+     // console.log("user and key :"+user +" "+key);
+      //console.log("rev :"+rev);
+      if(user === rec && _key === key) {
         isReviewed =true;
         break;
       }
@@ -200,7 +209,28 @@ export default class QuestionList extends React.Component {
       return 'black'
     }
   }
+  ListEmpty = () => {
+    return (
+      //View to show when list is empty
+      <View style={styles.container}>
+        <Text style={{alignContent:'center',justifyContent:'center',color:'black', fontSize:20,fontWeight:'bold'}}>You don't have any Sub Ordinates.</Text> 
+      </View>
+    );
+  };
 
+  ListEmptyAssessment = () => {
+    return (
+      //View to show when list is empty
+      <View style={{
+          flex: 1, 
+          alignItems: 'center',
+          justifyContent: 'center', 
+          backgroundColor: '#262d38'
+      }}>
+        <Text style={{alignItems:'center',justifyContent:'center',color:'white', fontSize:17}}>No Assessments created.</Text> 
+      </View>
+    );
+  };
 
   render() {
 
@@ -212,6 +242,7 @@ export default class QuestionList extends React.Component {
           style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
           extraData={this.state}
           data={this.state.data}
+          ListEmptyComponent={this.ListEmptyAssessment}
           refreshControl={
             <RefreshControl
               refreshing={this.state.isRefreshing}
@@ -252,6 +283,7 @@ export default class QuestionList extends React.Component {
               style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
               extraData={this.state}
               data={this.state.mydata}
+              ListEmptyComponent={this.ListEmpty}
               refreshControl={
                 <RefreshControl
                   refreshing={this.state.isRefreshing}
@@ -280,6 +312,7 @@ export default class QuestionList extends React.Component {
                   </View>
 
                 </TouchableWithoutFeedback >
+              
               }
             />
             <TouchableOpacity style={{ backgroundColor: '#1e88e5', paddingLeft: 20, paddingTop: 10, paddingBottom: 10, borderRadius: 30, marginBottom: 10 }} onPress={() => { this.setState({ isModalVisible: false }) }} >

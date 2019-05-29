@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet,AsyncStorage,RefreshControl,FlatList,Text, View ,StatusBar} from 'react-native';
+import { StyleSheet,AsyncStorage,RefreshControl,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 
@@ -11,6 +11,7 @@ export default class MyReview extends React.Component {
         this.state = {
             data:[],
             isRefreshing:true,
+            sectionList:[],
 
         }
     this.onRefresh = this.onRefresh.bind(this);
@@ -24,43 +25,121 @@ export default class MyReview extends React.Component {
         this.setState({ data: [] }, function () {
           this.getData();
         });
-    
     }
     getData(){
         const setState =  this.setState.bind(this);
         AsyncStorage.getItem('recordId').then((recordId)=>{
             db.ref('Review').child(recordId).once('value',function(snapshot){
-                var response = Object.values(snapshot.val())
-                setState({data:response},function(){
-                    console.log('my review '+JSON.stringify(this.state.data));
+              var response=[];
+              if(snapshot.exists()){
+                snapshot.forEach(function(_childSnapshot){
+                  //console.log("snapshot ::: "+JSON.stringify(_childSnapshot.val()));
+                  _childSnapshot.forEach(function(child){
+                    if(_childSnapshot.val() !== null ){
+                      response.push(Object.values(_childSnapshot.val())[0])
+                      //console.log("response object val() :"+JSON.stringify(response))
+                    }else{
+                      response =[];
+                    }
+                 })
+                })
+              }
+              setState({data:response},function(){
+                  //  console.log('my review '+JSON.stringify(this.state.data));
+                  var data = this.state.data;
+                  var result = [];
+                  var title =[];
+                  var result = [];
+
+                  for( var i in data){
+                    if(title.indexOf(data[i].title)=== -1){
+                    title.push(data[i].title)
+                    }
+                  }
+                  //console.log(JSON.stringify(title))
+                  title.forEach(function(i){
+                  var temp1=[];
+                  for(var j of data){
+                    if(j.title ===i){
+                      temp1.push(j);
+                    }
+                  }
+                  var temp={
+                    title:i,
+                    data:temp1
+                  }
+                  //console.log("temp :"+JSON.stringify(temp)+"\n\n")
+                  result.push(temp);
+                  })
+                 // console.log("section list :"+ JSON.stringify(result))
+                  setState({isRefreshing:false,sectionList:result},function(){
+                  //  console.log(JSON.stringify(this.state.sectionList))
+                  })
                 })
             })
         })
-        setState({isRefreshing:false})
+        //make data as section list structure
+        
     }
+    getColor=(item)=>{
+      var percent =  item.result
+      console.log(percent+'%')
+      if(percent<40){
+        return 'red'
+      }else if(percent>=40 && percent <60){
+        return 'orange'
+      }else if(percent>=60){
+        return 'green'
+      }
+    }
+    ListEmpty = () => {
+      return (
+        //View to show when list is empty
+        <View style={{
+            flex: 1, 
+            alignItems: 'center',
+            justifyContent: 'center', 
+            backgroundColor: '#262d38'
+        }}>
+          <Text style={{alignItems:'center',justifyContent:'center',color:'white', fontSize:17}}>No Reviews..!.</Text> 
+        </View>
+      );
+    };
+  
 
   render() {
     return (
 
-        //To-do --> card with data
         <View style={styles.container}>
-            <FlatList
-                data={this.state.data}
+            <SectionList
+                //data={this.state.sectionList}
                 extraData={this.state}
+                ListEmptyComponent={this.ListEmpty}
+                
                 refreshControl={ 
                   <RefreshControl
                     refreshing={this.state.isRefreshing}
                     onRefresh={this.onRefresh.bind(this)}
                   />
                 }
+                sections={this.state.sectionList.sort(function(a,b){
+                  return a.result - b.result;
+                })}
+                renderSectionHeader={({section})=>(
+                  <Text style={styles.SectionHeaderStyle}>{section.title}</Text>
+                )}
                 renderItem={({item,index})=>
                 <Card
-                    containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
-                    title={item.title}
+                    containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5,marginBottom:4 }}
+                    title={item.name}
                     titleStyle={{ fontSize: 18 }}>
                         <Text style={styles.item}>
                             {item.startdate} - {item.enddate}
                         </Text>
+                        <Text style={[styles.itemmark,{color:this.getColor(item)}]}>
+                          {Math.round(item.result)+' %'}
+                        </Text>
+
                 </Card>          
                }
             />
@@ -76,5 +155,21 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#455a64',
     justifyContent: 'center',
-  }
+  },
+  itemmark:{
+    textAlign:'center',fontWeight:'bold',fontSize:20,marginBottom:10,paddingTop:5
+  },
+  item:{
+    color:'grey', 
+    fontSize:16,
+    fontWeight:'bold',
+    textAlign: 'center',
+  },
+  SectionHeaderStyle: {
+    backgroundColor: '#262d38',
+    fontSize: 16,
+    padding: 4,
+    textAlign:'center',
+    color: '#fff',
+  },
 });

@@ -45,6 +45,7 @@ export default class Review extends React.Component {
             snapPosition: 0,
             headerheight: true,
             response: [],
+            total:0,
             rightBtnVisible: true,
             currentIndex: 0,
             showUploadProgress: false,
@@ -116,6 +117,7 @@ export default class Review extends React.Component {
         Actions.pop()
         return true
     }
+
     handleConnectivityChange = isConnected => {
         if (isConnected) {
             this.setState({ isConnected });
@@ -123,9 +125,11 @@ export default class Review extends React.Component {
             this.setState({ isConnected });
         }
     }
+
     ratingCompleted(rating) {
         console.log("Rating is: " + rating)
     }
+
     //other methods
     _loadInit() {
         var jsonItem = this.props.item;
@@ -142,6 +146,7 @@ export default class Review extends React.Component {
             enddate: jsonAssItem.todate,
             key: jsonAssItem.key,
             email: jsonItem.employemailId,
+            total:jsonAssItem.total
 
         }, function () {
             const setState = this.setState.bind(this);
@@ -298,6 +303,19 @@ export default class Review extends React.Component {
                         if (!flag) {
                             alert("Rate for all questions")
                         } else {
+                            //to calculate review results
+                            var totalResult = 0;
+                            for(var i in response){
+                                var weightage = response[i].weightage;
+                                var rating = response[i].rating;
+                                //single star value
+                                var singleStar = weightage / 5;
+                                var result = singleStar * rating;
+                                totalResult=totalResult+result;
+                                console.log("total result :"+totalResult)
+                            }
+                            var total =  this.state.total;
+                            var percent = (totalResult/total)*100;
 
                             AsyncStorage.getItem('recordId').then((record_id) => {
                                 var final_json = {
@@ -309,8 +327,11 @@ export default class Review extends React.Component {
                                     question_id: this.state.key,
                                     response: this.state.response,
                                     reviewer: record_id,
+                                    result:percent,
+                                    total
+                                    
                                 }
-                                db.ref('/Review/' + record_id + '/' + this.state.recordId).set(final_json)
+                                db.ref('/Review/' + record_id + '/' + this.state.recordId+'/'+this.state.key).set(final_json)
                                     .then((data) => {Toast.show("Assessment review saved ..! ")
                                         Actions.pop();
                                     })

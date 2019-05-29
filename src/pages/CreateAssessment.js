@@ -141,7 +141,7 @@ export default class CreateAssessment extends React.Component {
             questions:this.state.questions,
             total:this.state.total,
             key:key,
-            createdby:recordId+''
+            createdby:recordId+'',
           }
             db.ref('/Questions/'+recordId+'/'+key).set(toBeSaved).then((data)=>{
                 this.hideProgress();

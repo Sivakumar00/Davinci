@@ -3,6 +3,15 @@ import { StyleSheet, Text, View ,Image} from 'react-native';
 
 
 export default class Logo extends React.Component {
+
+
+  constructor(props){
+    super(props);
+    this.state ={
+      response:[],
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>

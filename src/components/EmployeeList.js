@@ -21,7 +21,7 @@ export default class EmployeeList extends React.Component {
       <View>
           <Image style = {{alignContent:'center',width:100,height:100, alignSelf:'center', marginTop:40}} 
                   source = {require('../images/visualbi_logo.png')}/>
-          <Text style={{textAlign:'center',marginTop:20,fontSize:20,fontWeight:'200',color:"white"}}>You are not a Team manager</Text>
+          <Text style={{textAlign:'center',marginTop:20,fontSize:20,fontWeight:'200',color:"white"}}>Loading ...</Text>
       </View>
       );
   };
