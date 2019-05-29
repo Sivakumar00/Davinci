@@ -11,7 +11,7 @@
     "firebase": "^6.0.1",
     "json-bigint": "^0.3.0",
     "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native": "0.57.1",          
     "react-native-cli": "^2.0.1",
     "react-native-datepicker": "^1.7.2",
     "react-native-elements": "^1.1.0",
@@ -28,7 +28,8 @@
     "react-native-tab-view": "^2.2.0",
     "react-navigation": "^3.9.1",
     "react-navigation-drawer": "^1.2.1",
-    "rn-viewpager": "^1.2.9"
+    "rn-viewpager": "^1.2.9",
+    "@babel/runtime": "^7.0.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"
