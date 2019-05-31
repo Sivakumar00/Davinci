@@ -294,7 +294,7 @@ export default class Review extends React.Component {
                     <IndicatorViewPager
                         ref={viewPager => { this.viewPager = viewPager; }}
                         style={{ height: 450, width: '90%', margin: 20 }}
-                        scrollEnabled={false}
+                        scrollEnabled={true}
                         horizontalScroll={true}
                         indicator={this._renderDotIndicator()}
 
