@@ -1,12 +1,15 @@
 import React from 'react';
 import { StyleSheet,Text,TouchableWithoutFeedback ,Image  , View ,FlatList} from 'react-native';
 import { Card } from 'react-native-elements';
+import { Modal } from 'react-native-router-flux';
 export default class EmployeeList extends React.Component {
 
   constructor(props){
     super(props);
     this.state = {
-      data:[]
+      data:[],
+      isModalVisible:false,
+      image_uri:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/768px-Circle-icons-profile.svg.png'
     }
   }
 
@@ -48,16 +51,20 @@ export default class EmployeeList extends React.Component {
              </Card>
           </View>
         </TouchableWithoutFeedback > 
-         }
-        
-         
+          }
         />
+        <Modal isVisible={this.state.isModalVisible}>
+          <View style={{ backgroundColor: 'rgba(238,238,238,1)', borderRadius: 20, padding: 10, flex: 1, justifyContent: 'center' }}>
+              <Image source = {{uri:this.state.image_uri}}/>
+          </View>
+ 
+        </Modal>
+
       </View>
     );
   }
   itemClick = (item)=>{
-   // console.log(JSON.stringify(item))
-    
+    this.setState({isModalVisible:true})
   }
 }
 

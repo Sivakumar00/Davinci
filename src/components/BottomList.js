@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text ,StyleSheet} from 'react-native';
-import { Constants } from 'expo';
 import ScrollableTabView, { ScrollableTabBar } from 'react-native-scrollable-tab-view';
 import Assessment from './Assessment';
 import OrganisationalTree from './OrganisationTree';

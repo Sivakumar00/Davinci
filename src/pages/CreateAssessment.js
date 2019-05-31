@@ -3,7 +3,7 @@ import { StyleSheet,Button,NetInfo,Image,Dimensions,TouchableWithoutFeedback,Asy
 import {db} from '../config/db'
 import { Card } from 'react-native-elements';
 import { FlatList } from 'react-native-gesture-handler';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-root-toast';
 import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
 import DatePicker from 'react-native-datepicker';
@@ -145,13 +145,25 @@ export default class CreateAssessment extends React.Component {
           }
             db.ref('/Questions/'+recordId+'/'+key).set(toBeSaved).then((data)=>{
                 this.hideProgress();
-                Toast.show('Assessment created ..!')
+                Toast.show('Assessment created ..!', {
+                  duration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,})
                 Actions.pop();
             }).catch((error)=>{Toast.show('Problem Occured :'+error,200)});
         })
       }else{
         this.hideProgress();
-        Toast.show('Problem occured ..!')
+        Toast.show('Problem occured ..!', {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,})
       }
   }
 

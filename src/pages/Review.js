@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, TextInput, Keyboard, Dimensions, TouchableOpacity, KeyboardAvoidingView, NetInfo, BackHandler, ImageBackground, Image, ActivityIndicator, AsyncStorage, Text, View, StatusBar } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import SideSwipe from 'react-native-sideswipe';
 import { Card } from 'react-native-elements';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-root-toast';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import { ScrollView, FlatList } from 'react-native-gesture-handler';
@@ -332,10 +331,22 @@ export default class Review extends React.Component {
                                     
                                 }
                                 db.ref('/Review/' + record_id + '/' + this.state.recordId+'/'+this.state.key).set(final_json)
-                                    .then((data) => {Toast.show("Assessment review saved ..! ")
+                                    .then((data) => {Toast.show("Assessment review saved ..! ", {
+                                        duration: Toast.durations.LONG,
+                                        position: Toast.positions.BOTTOM,
+                                        shadow: true,
+                                        animation: true,
+                                        hideOnPress: true,
+                                        delay: 0,})
                                         Actions.pop();
                                     })
-                                    .catch((err)=>Toast.show(err))
+                                    .catch((err)=>Toast.show(err, {
+                                        duration: Toast.durations.LONG,
+                                        position: Toast.positions.BOTTOM,
+                                        shadow: true,
+                                        animation: true,
+                                        hideOnPress: true,
+                                        delay: 0,}))
 
                             })
                         }

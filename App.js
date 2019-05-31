@@ -6,10 +6,9 @@ import Routes from './src/Routes';
 export default class App extends React.Component {
   render() {
     return (
-              <Routes/>    
+      <Routes/>    
     );
   }
-
 }
 
 const styles = StyleSheet.create({

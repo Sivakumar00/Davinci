@@ -1,10 +1,5 @@
 import React from 'react';
 import { StyleSheet,Text, ScrollView, Image, FlatList, View, AsyncStorage} from 'react-native';
-
-const authToken = "6e13da6b433aecfb0236a5ba09632032";
-import { db } from '../config/db';
-const RIGHT_ARROW = require('../images/right-arrow.png');
-const DOWN_ARROW = require('../images/down-arrow.png');
 import EmployeeList from './EmployeeList';
 
 export default class OrganisationalTree extends React.Component {

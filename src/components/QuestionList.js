@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, ActivityIndicator, RefreshControl, Image, TouchableOpacity, TouchableWithoutFeedback, Alert, AsyncStorage, View, StatusBar } from 'react-native';
 import { db } from '../config/db';
-import Toast from 'react-native-simple-toast';
+import Toast from 'react-native-root-toast';
 import { Card } from 'react-native-elements';
 import Modal from "react-native-modal";
 import { FlatList } from 'react-native-gesture-handler';
@@ -159,14 +159,26 @@ export default class QuestionList extends React.Component {
               console.log("difference " + recordId.toString() + " " + rec_id)
               if (recordId.toString() === rec_id) {
                 db.ref('/Questions/' + rec_id + '/' + key).remove().then(function () {
-                  Toast.show('Assessment Removed ..! Swipe to refresh')
+                  Toast.show('Assessment Removed ..! Swipe to refresh', {
+                    duration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,})
                   //setState({isRefreshing:true})
                 }).catch((error) => {
                   console.log("ERROR " + error)
                   Toast.show('Problem Occured :' + error)
                 });
               } else {
-                Toast.show("You don't have access to delete it..!")
+                Toast.show("You don't have access to delete it..!", {
+                  duration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,})
               }
 
             })

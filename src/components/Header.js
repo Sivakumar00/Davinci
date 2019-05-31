@@ -46,8 +46,6 @@ export default class Header extends React.Component {
                 .then((responseJson)=>{
                     var json=responseJson[0];
                     console.log(json.Photo);
-
-                   
                     this.saveUserID(json.recordId);
                     this.setState({
                             isLoading:false,
