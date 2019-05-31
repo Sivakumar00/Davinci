@@ -7,6 +7,7 @@ import SignUp from './pages/SignUp'
 import Home from './pages/Home'
 import CreateAssessment from './pages/CreateAssessment'
 import Review from './pages/Review';
+import EditReview from './pages/EditReview';
 
 const reducerCreate = params => {
 
@@ -35,6 +36,7 @@ export default class Routes extends React.Component{
                     <Scene key="home" component={Home} title="Home" />
                     <Scene key="Question" component = {CreateAssessment} title="Create Assessment" back={true} />
                     <Scene key="review" component = {Review} title = "Review" back={true}/>
+                    <Scene key="editReview" component = {EditReview} title="Edit Review" back ={true}/>
                 </Stack>
             </Router>
         )

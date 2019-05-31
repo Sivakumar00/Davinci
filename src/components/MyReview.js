@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet,AsyncStorage,RefreshControl,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
+import { StyleSheet,AsyncStorage,RefreshControl,TouchableOpacity,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
 
 
 export default class MyReview extends React.Component {
@@ -107,17 +108,19 @@ export default class MyReview extends React.Component {
         </View>
       );
     };
-  
+    myReviewClick(item){
+      console.log("my review"+JSON.stringify(item))
+      if(item!==null)
+        Actions.editReview({item})
+    }
 
   render() {
     return (
 
         <View style={styles.container}>
             <SectionList
-                //data={this.state.sectionList}
                 extraData={this.state}
                 ListEmptyComponent={this.ListEmpty}
-                
                 refreshControl={ 
                   <RefreshControl
                     refreshing={this.state.isRefreshing}
@@ -131,6 +134,7 @@ export default class MyReview extends React.Component {
                   <Text style={styles.SectionHeaderStyle}>{section.title}</Text>
                 )}
                 renderItem={({item,index})=>
+                <TouchableOpacity onPress={()=>{this.myReviewClick(item)} }>
                 <Card
                     containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5,marginBottom:4 }}
                     title={item.name}
@@ -142,7 +146,8 @@ export default class MyReview extends React.Component {
                           {Math.round(item.result)+' %'}
                         </Text>
 
-                </Card>          
+                </Card>   
+                </TouchableOpacity>       
                }
             />
         </View>

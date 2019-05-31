@@ -170,6 +170,7 @@ export default class Review extends React.Component {
                     response: this.state.response,
                     reviewer: record_id,
                     result:percent,
+                    recordId:this.state.recordId,
                     total
                     
                 }
@@ -251,7 +252,6 @@ export default class Review extends React.Component {
                                 showProgress: false
                             })
                     }
-
                 })
         })
 
@@ -305,10 +305,9 @@ export default class Review extends React.Component {
                                     containerStyle={{ height: 330, padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
                                     title={(index + 1) + ") " + item.question}
                                     titleStyle={{ fontSize: 19 }}>
-
                                     <Text style={{ fontSize: 14, textAlign: 'center', fontStyle: 'italic', color: colors.gray }}>
                                         Star Rating for the Question
-                                </Text>
+                                    </Text>
                                     <AirbnbRating
                                         defaultRating={0}
                                         reviews={["1/5", "2/5", "3/5", "4/5", "5/5"]}
@@ -322,7 +321,6 @@ export default class Review extends React.Component {
                                     />
 
                                     <TextInput
-
                                         underlineColorAndroid='transparent'
                                         placeholder='Comments (Optional)'
                                         placeholderTextColor={colors.gray}
@@ -349,8 +347,6 @@ export default class Review extends React.Component {
                             </View>
                         )}
                     </IndicatorViewPager>
-
-
                 </View >
                 <TouchableOpacity style={{ backgroundColor: '#1e88e5', paddingLeft: 20, paddingTop: 10, paddingBottom: 10, borderRadius: 30, marginBottom: 10, marginTop: 30, marginLeft: 20, marginRight: 20 }}
                     onPress={this.finishBtn}
