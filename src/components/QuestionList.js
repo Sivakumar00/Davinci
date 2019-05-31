@@ -17,11 +17,11 @@ export default class QuestionList extends React.Component {
       isAdmin: false,
       visible: false,
       mydata: [],
-      reviewedList:[],
+      reviewedList: [],
       isRefreshing: true,
-      question_id:'',
+      question_id: '',
       isModalVisible: false,
-      assessmentItem:{},
+      assessmentItem: {},
     }
 
     this.longPressItem = this.longPressItem.bind(this);
@@ -68,9 +68,9 @@ export default class QuestionList extends React.Component {
         // var tree = unflatten(json);
         // this.setState({data:tree});
       })
-      if(this.state.isRefreshing){
-        this.setState({isRefreshing:false})
-      }
+    if (this.state.isRefreshing) {
+      this.setState({ isRefreshing: false })
+    }
   }
   onRefresh = () => {
     this.setState({ data: [] }, function () {
@@ -117,22 +117,22 @@ export default class QuestionList extends React.Component {
 
     })
     var reviewedList = [];
-    console.log('record firebase '+this.state.recordId)
-    AsyncStorage.getItem('recordId').then((recordId)=>{
-      db.ref('Review').child(recordId).on('value',function(snapshot){
-       // console.log(JSON.stringify(snapshot.key))
-  
-        snapshot.forEach(function(childSnapshot){
-          childSnapshot.forEach(function(_child){
-            reviewedList.push(childSnapshot.key+" "+_child.child('question_id').val())
-            setState({reviewedList},function(){
-              console.log("review /list :"+JSON.stringify(this.state.reviewedList))
+    console.log('record firebase ' + this.state.recordId)
+    AsyncStorage.getItem('recordId').then((recordId) => {
+      db.ref('Review').child(recordId).on('value', function (snapshot) {
+        // console.log(JSON.stringify(snapshot.key))
+
+        snapshot.forEach(function (childSnapshot) {
+          childSnapshot.forEach(function (_child) {
+            reviewedList.push(childSnapshot.key + " " + _child.child('question_id').val())
+            setState({ reviewedList }, function () {
+              console.log("review /list :" + JSON.stringify(this.state.reviewedList))
             })
           })
 
         })
       })
-     
+
     })
     setState({ isRefreshing: false })
     setState({ data: tempArr })
@@ -165,7 +165,8 @@ export default class QuestionList extends React.Component {
                     shadow: true,
                     animation: true,
                     hideOnPress: true,
-                    delay: 0,})
+                    delay: 0,
+                  })
                   //setState({isRefreshing:true})
                 }).catch((error) => {
                   console.log("ERROR " + error)
@@ -178,7 +179,8 @@ export default class QuestionList extends React.Component {
                   shadow: true,
                   animation: true,
                   hideOnPress: true,
-                  delay: 0,})
+                  delay: 0,
+                })
               }
 
             })
@@ -193,31 +195,33 @@ export default class QuestionList extends React.Component {
   //assessment onClickListener
   itemClick(item) {
     //getting the sub-ordinates 
-    this.setState({isModalVisible:true,
-              assessmentItem:item},function(){
+    this.setState({
+      isModalVisible: true,
+      assessmentItem: item
+    }, function () {
       console.log("modal displayed..!")
-      
+
     })
   }
-  getColor=(item)=>{
-    var rec =  item.recordId;
+  getColor = (item) => {
+    var rec = item.recordId;
     var key = this.state.assessmentItem.key
     var reviewedList = this.state.reviewedList;
-    var isReviewed =  false;
-    for(var i in reviewedList){
+    var isReviewed = false;
+    for (var i in reviewedList) {
       var rev = reviewedList[i];
-      var user = rev.substring(0,rev.indexOf(" ")).trim();
-      var _key =  rev.substring(rev.indexOf(" "),rev.length).trim()
-     // console.log("user and key :"+user +" "+key);
+      var user = rev.substring(0, rev.indexOf(" ")).trim();
+      var _key = rev.substring(rev.indexOf(" "), rev.length).trim()
+      // console.log("user and key :"+user +" "+key);
       //console.log("rev :"+rev);
-      if(user === rec && _key === key) {
-        isReviewed =true;
+      if (user === rec && _key === key) {
+        isReviewed = true;
         break;
       }
     }
-    if(isReviewed){
+    if (isReviewed) {
       return 'green'
-    }else{
+    } else {
       return 'black'
     }
   }
@@ -225,7 +229,7 @@ export default class QuestionList extends React.Component {
     return (
       //View to show when list is empty
       <View style={styles.container}>
-        <Text style={{alignContent:'center',justifyContent:'center',color:'black', fontSize:20,fontWeight:'bold'}}>You don't have any Sub Ordinates.</Text> 
+        <Text style={{ alignContent: 'center', justifyContent: 'center', color: 'black', fontSize: 20, fontWeight: 'bold' }}>You don't have any Sub Ordinates.</Text>
       </View>
     );
   };
@@ -234,12 +238,12 @@ export default class QuestionList extends React.Component {
     return (
       //View to show when list is empty
       <View style={{
-          flex: 1, 
-          alignItems: 'center',
-          justifyContent: 'center', 
-          backgroundColor: '#262d38'
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#262d38'
       }}>
-        <Text style={{alignItems:'center',justifyContent:'center',color:'white', fontSize:17}}>No Assessments created.</Text> 
+        <Text style={{ alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 17 }}>No Assessments created.</Text>
       </View>
     );
   };
@@ -290,7 +294,7 @@ export default class QuestionList extends React.Component {
 
         <Modal isVisible={this.state.isModalVisible}>
           <View style={{ backgroundColor: 'rgba(238,238,238,1)', borderRadius: 20, padding: 10, flex: 1, justifyContent: 'center' }}>
-            <Text style={{ color: '#1e88e5', fontSize: 18,marginBottom:10, fontWeight: 'bold', textAlign: 'center' }}>Select the Sub-Ordinate</Text>
+            <Text style={{ color: '#1e88e5', fontSize: 18, marginBottom: 10, fontWeight: 'bold', textAlign: 'center' }}>Select the Sub-Ordinate</Text>
             <FlatList
               style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
               extraData={this.state}
@@ -303,20 +307,20 @@ export default class QuestionList extends React.Component {
                 />
               }
               renderItem={({ item, index }) =>
-              
+
                 <TouchableWithoutFeedback
                   onPress={() => {
                     console.log(JSON.stringify(item))
-                    this.setState({isModalVisible:false},function(){
-                      Actions.review({item:item,assessmentItem:this.state.assessmentItem})
+                    this.setState({ isModalVisible: false }, function () {
+                      Actions.review({ item: item, assessmentItem: this.state.assessmentItem })
                     });
 
                   }}>
                   <View>
                     <Card
                       containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
-                      title={item.employeeFname +" "+item.employeeLname}
-                      titleStyle={[styles.titleText,{color:this.getColor(item)}]}>
+                      title={item.employeeFname + " " + item.employeeLname}
+                      titleStyle={[styles.titleText, { color: this.getColor(item) }]}>
                       <Text style={styles.item}>
                         {item.employeeId}
                       </Text>
@@ -324,7 +328,7 @@ export default class QuestionList extends React.Component {
                   </View>
 
                 </TouchableWithoutFeedback >
-              
+
               }
             />
             <TouchableOpacity style={{ backgroundColor: '#1e88e5', paddingLeft: 20, paddingTop: 10, paddingBottom: 10, borderRadius: 30, marginBottom: 10 }} onPress={() => { this.setState({ isModalVisible: false }) }} >
@@ -391,7 +395,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     color: 'white'
   },
-  titleText:{
+  titleText: {
     color: '#000',
     fontSize: 18,
     textAlign: 'center',

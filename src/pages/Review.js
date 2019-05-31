@@ -60,7 +60,7 @@ export default class Review extends React.Component {
         this.hideProgress = this.hideProgress.bind(this)
         this.showUploadProgress = this.openReviewProgress.bind(this)
         this.hideProgress = this.hideReviewProgress.bind(this);
-
+        this.finishBtn = this.finishBtn.bind(this);
     }
     openProgress = () => {
         this.setState({ showProgress: true });
@@ -127,6 +127,73 @@ export default class Review extends React.Component {
 
     ratingCompleted(rating) {
         console.log("Rating is: " + rating)
+    }
+
+    finishBtn(){
+        const setState = this.setState.bind(this);
+        this.openReviewProgress();
+        console.log(JSON.stringify(this.state.response))
+        var response = this.state.response;
+        var flag = true;
+        for (var obj in response) {
+            console.log(response[obj].rating)
+            if (response[obj].rating === 0 || response[obj].rating === "") {
+                flag = false;
+                break;
+            }
+        }
+        if (!flag) {
+            alert("Rate for all questions")
+        } else {
+            //to calculate review results
+            var totalResult = 0;
+            for(var i in response){
+                var weightage = response[i].weightage;
+                var rating = response[i].rating;
+                //single star value
+                var singleStar = weightage / 5;
+                var result = singleStar * rating;
+                totalResult=totalResult+result;
+                console.log("total result :"+totalResult)
+            }
+            var total =  this.state.total;
+            var percent = (totalResult/total)*100;
+
+            AsyncStorage.getItem('recordId').then((record_id) => {
+                var final_json = {
+                    name:this.state.employeeName,
+                    title: this.state.title,
+                    startdate: this.state.startdate,
+                    enddate: this.state.enddate,
+                    email: this.state.email,
+                    question_id: this.state.key,
+                    response: this.state.response,
+                    reviewer: record_id,
+                    result:percent,
+                    total
+                    
+                }
+                db.ref('/Review/' + record_id + '/' + this.state.recordId+'/'+this.state.key).set(final_json)
+                    .then((data) => {Toast.show("Assessment review saved ..! ", {
+                        duration: Toast.durations.LONG,
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,})
+                        Actions.pop();
+                    })
+                    .catch((err)=>Toast.show(err, {
+                        duration: Toast.durations.LONG,
+                        position: Toast.positions.BOTTOM,
+                        shadow: true,
+                        animation: true,
+                        hideOnPress: true,
+                        delay: 0,}))
+
+            })
+        }
+        this.hideReviewProgress()
     }
 
     //other methods
@@ -286,73 +353,7 @@ export default class Review extends React.Component {
 
                 </View >
                 <TouchableOpacity style={{ backgroundColor: '#1e88e5', paddingLeft: 20, paddingTop: 10, paddingBottom: 10, borderRadius: 30, marginBottom: 10, marginTop: 30, marginLeft: 20, marginRight: 20 }}
-                    onPress={() => {
-                        const setState = this.setState.bind(this);
-                        this.openReviewProgress();
-                        console.log(JSON.stringify(this.state.response))
-                        var response = this.state.response;
-                        var flag = true;
-                        for (var obj in response) {
-                            console.log(response[obj].rating)
-                            if (response[obj].rating === 0 || response[obj].rating === "") {
-                                flag = false;
-                                break;
-                            }
-                        }
-                        if (!flag) {
-                            alert("Rate for all questions")
-                        } else {
-                            //to calculate review results
-                            var totalResult = 0;
-                            for(var i in response){
-                                var weightage = response[i].weightage;
-                                var rating = response[i].rating;
-                                //single star value
-                                var singleStar = weightage / 5;
-                                var result = singleStar * rating;
-                                totalResult=totalResult+result;
-                                console.log("total result :"+totalResult)
-                            }
-                            var total =  this.state.total;
-                            var percent = (totalResult/total)*100;
-
-                            AsyncStorage.getItem('recordId').then((record_id) => {
-                                var final_json = {
-                                    name:this.state.employeeName,
-                                    title: this.state.title,
-                                    startdate: this.state.startdate,
-                                    enddate: this.state.enddate,
-                                    email: this.state.email,
-                                    question_id: this.state.key,
-                                    response: this.state.response,
-                                    reviewer: record_id,
-                                    result:percent,
-                                    total
-                                    
-                                }
-                                db.ref('/Review/' + record_id + '/' + this.state.recordId+'/'+this.state.key).set(final_json)
-                                    .then((data) => {Toast.show("Assessment review saved ..! ", {
-                                        duration: Toast.durations.LONG,
-                                        position: Toast.positions.BOTTOM,
-                                        shadow: true,
-                                        animation: true,
-                                        hideOnPress: true,
-                                        delay: 0,})
-                                        Actions.pop();
-                                    })
-                                    .catch((err)=>Toast.show(err, {
-                                        duration: Toast.durations.LONG,
-                                        position: Toast.positions.BOTTOM,
-                                        shadow: true,
-                                        animation: true,
-                                        hideOnPress: true,
-                                        delay: 0,}))
-
-                            })
-                        }
-                        this.hideReviewProgress()
-
-                    }}
+                    onPress={this.finishBtn}
                 >
                     <Text style={{ color: '#fff', textAlign: 'center' }}>Finish</Text>
                 </TouchableOpacity>

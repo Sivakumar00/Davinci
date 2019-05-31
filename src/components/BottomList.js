@@ -8,22 +8,22 @@ export default class BottomList extends React.Component {
   render() {
     return (
       <ScrollableTabView style={StyleSheet.tab}
-      tabBarActiveTextColor='#fff'
+        tabBarActiveTextColor='#fff'
         tabBarUnderlineStyle={{backgroundColor:'white'}}
         tabBarInactiveTextColor='#90a4ae'
         initialPage={0}
         renderTabBar={() => <ScrollableTabBar />}
-      >
-        <View  tabLabel='Assessments'>
-          <Assessment/>
-        </View>
-        <View tabLabel='Sub-Ordinates'>
-          <OrganisationalTree/>
-        </View>
-        <View tabLabel='My Reviews'>
-          <MyReview/>
-        </View>
-      
+        >
+          <View  tabLabel='Assessments'>
+            <Assessment/>
+          </View>
+          <View tabLabel='Sub-Ordinates'>
+            <OrganisationalTree/>
+          </View>
+          <View tabLabel='My Reviews'>
+            <MyReview/>
+          </View>
+        
       </ScrollableTabView>
     );
   }
@@ -31,7 +31,6 @@ export default class BottomList extends React.Component {
 const styles = StyleSheet.create({
   tab:{
     flexGrow:1,
-    
     alignItems:'flex-start'
   }
 })

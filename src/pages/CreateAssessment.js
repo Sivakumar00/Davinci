@@ -82,8 +82,7 @@ export default class CreateAssessment extends React.Component {
 
   }
   addBtnClick()
-  {   
-
+  {  
       var btnState = this.state.buttontext;
       if(this.state.questioncount >=1){
         this.setState({finishBtn:true})
@@ -102,8 +101,6 @@ export default class CreateAssessment extends React.Component {
       }else{
           // to add questions
           if(this.state.question !== ''&& this.state.weightage !== ''){
-           
-
             this.setState({total:this.state.total + parseInt(this.state.weightage)})
             this.setState({questioncount:this.state.questioncount+1})
             let questions = this.state.questions;
@@ -114,10 +111,10 @@ export default class CreateAssessment extends React.Component {
                 weightage:this.state.weightage
             }
             questions.push(singleQue);
-            this.setState({question:''})
-            this.setState({questions:questions},()=>{console.log(this.state.questions)});
-            this.setState({gettext:''})
-            this.setState({weightage:''})
+            this.setState({question:'',
+                          questions:questions,
+                          gettext:'',
+                          weightage:'',},console.log("question "+this.state.question))
           }else{
             alert('Field is empty ..!')
           }
@@ -243,9 +240,7 @@ export default class CreateAssessment extends React.Component {
                     underlineColorAndroid='transparent' 
                     placeholder='Weightage (out of 100)'
                     keyboardType='numeric'
-                    onChangeText={(text)=>{
-                      this.setState({weightage:text})
-                    }}
+                    onChangeText={(text)=>{this.setState({weightage:text})}}
                     value={this.state.weightage}
                     ></TextInput>:null}
                    {this.state.datepickerview ? <DatePicker

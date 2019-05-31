@@ -36,8 +36,10 @@ export default class MyReview extends React.Component {
                   //console.log("snapshot ::: "+JSON.stringify(_childSnapshot.val()));
                   _childSnapshot.forEach(function(child){
                     if(_childSnapshot.val() !== null ){
-                      response.push(Object.values(_childSnapshot.val())[0])
-                      //console.log("response object val() :"+JSON.stringify(response))
+                      var key = child.key;
+                      console.log("key :"+key);
+                      response.push(_childSnapshot.child(key).val())
+                      console.log("response object val() :"+JSON.stringify(response))
                     }else{
                       response =[];
                     }

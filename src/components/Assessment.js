@@ -5,11 +5,8 @@ import QuestionList from './QuestionList';
 
 
 export default class Assessment extends React.Component {
-
-
   render() {
     return (
-
       <QuestionList />
     );
   }
