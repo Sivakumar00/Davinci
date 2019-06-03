@@ -179,6 +179,7 @@ export default class EditReview extends React.Component {
             animation: true,
             hideOnPress: true,
             delay: 0,})
+            this.setState({btnState:true})
             Actions.pop();
         })
         .catch((err)=>Toast.show(err, {
@@ -189,6 +190,8 @@ export default class EditReview extends React.Component {
             hideOnPress: true,
             delay: 0}
             ))
+        this.setState({btnState:true})
+
     }
 
     render() {
