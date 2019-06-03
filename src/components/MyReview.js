@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet,AsyncStorage,RefreshControl,TouchableOpacity,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
+import { StyleSheet,AsyncStorage,RefreshControl,TouchableOpacity,Image,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -98,13 +98,19 @@ export default class MyReview extends React.Component {
     ListEmpty = () => {
       return (
         //View to show when list is empty
-        <View style={{
-            flex: 1, 
-            alignItems: 'center',
-            justifyContent: 'center', 
-            backgroundColor: '#262d38'
-        }}>
-          <Text style={{alignItems:'center',justifyContent:'center',color:'white', fontSize:17}}>No Reviews..!.</Text> 
+        <View style={{flexGrow:1,alignItems:'center',justifyContent:'center'}}>
+          <View style={{
+              flex: 1, 
+              alignItems: 'center',
+              justifyContent: 'center', 
+              backgroundColor: '#262d38'
+          }}>
+            <Text style={{width:'100%',alignItems:'center',justifyContent:'center',color:'white', fontSize:17}}>No Reviews..!.</Text> 
+          </View>
+          <TouchableOpacity onPress={this.onRefresh}>
+            <Image style={{width:40,height:40, marginTop:100}} source={require('../images/refresh.png')} />
+          </TouchableOpacity>
+
         </View>
       );
     };
@@ -121,6 +127,7 @@ export default class MyReview extends React.Component {
             <SectionList
                 extraData={this.state}
                 ListEmptyComponent={this.ListEmpty}
+                refreshing={this.state.isRefreshing}
                 refreshControl={ 
                   <RefreshControl
                     refreshing={this.state.isRefreshing}
