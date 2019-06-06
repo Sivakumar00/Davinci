@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet,AsyncStorage,RefreshControl,TouchableOpacity,Image,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
+import { StyleSheet,AsyncStorage,RefreshControl,TouchableWithoutFeedback,TouchableOpacity,Image,FlatList,Text, View ,SectionList,StatusBar} from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -141,7 +141,7 @@ export default class MyReview extends React.Component {
                   <Text style={styles.SectionHeaderStyle}>{section.title}</Text>
                 )}
                 renderItem={({item,index})=>
-                <TouchableOpacity onPress={()=>{this.myReviewClick(item)} }>
+                <TouchableWithoutFeedback onPress={()=>{this.myReviewClick(item)} }>
                 <Card
                     containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5,marginBottom:4 }}
                     title={item.name}
@@ -154,7 +154,7 @@ export default class MyReview extends React.Component {
                         </Text>
 
                 </Card>   
-                </TouchableOpacity>       
+                </TouchableWithoutFeedback>       
                }
             />
         </View>
