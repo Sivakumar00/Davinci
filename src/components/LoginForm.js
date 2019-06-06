@@ -53,8 +53,9 @@ export default class Logo extends React.Component {
                     style={styles.inputbox}
                     underlineColorAndroid='transparent'
                     placeholder="Email"
+                    autoCapitalize='none'
                     keyboardType="email-address"
-                    onChangeText={(username) => this.setState({ username })}
+                    onChangeText={(username) => this.setState({ username:username.toLowerCase() })}
                     onSubmitEditing={() => this.password.focus()} />
 
 
@@ -63,7 +64,6 @@ export default class Logo extends React.Component {
                     underlineColorAndroid='transparent'
                     placeholder="Password"
                     onChangeText={(password) => this.setState({ password })}
-
                     secureTextEntry={true}
                     ref={(input) => this.password = input} />
                 <TouchableOpacity style={styles.button} onPress={this.buttonClick}>

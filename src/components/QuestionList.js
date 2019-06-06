@@ -228,7 +228,7 @@ export default class QuestionList extends React.Component {
   ListEmpty = () => {
     return (
       //View to show when list is empty
-      <View style={styles.container}>
+      <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
         <Text style={{ alignContent: 'center', justifyContent: 'center', color: 'black', fontSize: 20, fontWeight: 'bold' }}>You don't have any Sub Ordinates.</Text>
       </View>
     );

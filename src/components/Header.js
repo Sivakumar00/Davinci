@@ -37,8 +37,9 @@ export default class Header extends React.Component {
             this.setState({ userId: value });
             this.setState({ userEmail: userEmail });
             console.log(this.state.userEmail);
-
-            fetch('https://people.zoho.com/people/api/forms/P_EmployeeView/records?authtoken=' + value + '&searchColumn=EMPLOYEEMAILALIAS&searchValue=' + this.state.userEmail)
+            var endpoint='https://people.zoho.com/people/api/forms/P_EmployeeView/records?authtoken=' + value + '&searchColumn=EMPLOYEEMAILALIAS&searchValue=' + this.state.userEmail
+            console.log("endpoint :"+endpoint)
+            fetch(endpoint)
                 .then((response) => response.json())
                 .then((responseJson) => {
                     var json = responseJson[0];
@@ -59,7 +60,7 @@ export default class Header extends React.Component {
                     }
 
                     AsyncStorage.setItem('recordId', json.recordId);
-
+                    console.log("record Id "+json.recordId);
                     db.ref('/Users/' + json.recordId).once('value', function (snapshot) {
                         if (!snapshot.exists()) {
                             db.ref('/Users/' + json.recordId).set(storeData)

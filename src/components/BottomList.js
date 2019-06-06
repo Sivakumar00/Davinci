@@ -32,14 +32,13 @@ export default class BottomList extends React.Component {
           <OrganisationalTree />
         </View>:null}
         {this.props.isManager ?
-        <View tabLabel='My Reviews'>
+        <View tabLabel='Reviewed by you'>
           <MyReview />
         </View>:null}
-        {this.props.isManager ? null:
-          <View tabLabel='My Reviews'>
-            <EmployeeReview />
-          </View>
-        }
+        <View tabLabel='My Reviews'>
+          <EmployeeReview />
+        </View>
+        
       </ScrollableTabView>
     );
   }

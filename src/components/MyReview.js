@@ -80,11 +80,10 @@ export default class MyReview extends React.Component {
                   })
                 })
             })
-        })
-        //make data as section list structure
-        
+        })        
     }
-    getColor=(item)=>{
+
+    getColor(item){
       var percent =  item.result
       console.log(percent+'%')
       if(percent<40){
@@ -117,7 +116,7 @@ export default class MyReview extends React.Component {
     myReviewClick(item){
       console.log("my review"+JSON.stringify(item))
       if(item!==null)
-        Actions.editReview({item})
+        Actions.editReview({item,view:true})
     }
 
   render() {

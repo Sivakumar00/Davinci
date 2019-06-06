@@ -12,6 +12,7 @@ export default class EditReview extends React.Component {
       this.state={
         questions:this.props.item.response,
         data:this.props.item,
+        isEdit:this.props.view,
         isRefreshing:true,
         btnState:true,
 
@@ -136,12 +137,17 @@ export default class EditReview extends React.Component {
       )
     }
     finishBtn=()=>{
+      if(this.state.isEdit)
       return(
+       
         <TouchableOpacity disabled={this.state.btnState} style={{ backgroundColor: '#1e88e5', paddingTop: 8, paddingBottom: 8}}
           onPress={this.onClickFinish.bind(this)}>
           <Text style={{ fontSize:18, color: '#fff', textAlign: 'center' }}>Finish Editing</Text>
         </TouchableOpacity>
       )
+      else{
+        return null;
+      }
     }
     onClickFinish(){
       this.setState({btnState:false})

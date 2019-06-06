@@ -40,10 +40,10 @@ export default class Home extends React.Component {
           if(responseJson.response.result.length === 0){
             this.setState({isManager:false},function(){
               console.log("isManager :"+this.state.isManager)
-              AsyncStorage.setItem('isManager',false)
+              AsyncStorage.setItem('isManager',"false")
             })
           }else{
-            AsyncStorage.setItem('isManager',true)
+            AsyncStorage.setItem('isManager',"true")
           }
         })
 
