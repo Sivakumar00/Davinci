@@ -12,6 +12,7 @@ export default class Logo extends React.Component {
             username: '',
             password: '',
             userId: '',
+            lockBtn:true,
             showProgress: true
         }
     }
@@ -37,9 +38,13 @@ export default class Logo extends React.Component {
 
     saveUserID = async userId => {
         try {
-            await AsyncStorage.setItem('user', userId);
-            await AsyncStorage.setItem('userEmail', this.state.username);
-            console.log("user id: " + AsyncStorage.getItem('user'))
+            AsyncStorage.setItem('user', userId).then((data)=>{
+                console.log("user id saved")
+            });
+            AsyncStorage.setItem('userEmail', this.state.username).then((data)=>{
+                console.log('user email saved')
+            });
+            //console.log("user id: " + AsyncStorage.getItem('user'))
             Actions.home();
         } catch (error) {
             console.error(error);
@@ -66,9 +71,9 @@ export default class Logo extends React.Component {
                     onChangeText={(password) => this.setState({ password })}
                     secureTextEntry={true}
                     ref={(input) => this.password = input} />
-                <TouchableOpacity style={styles.button} onPress={this.buttonClick}>
+                {this.state.lockBtn?<TouchableOpacity style={styles.button} onPress={this.buttonClick}>
                     <Text style={styles.buttontext}>{this.props.type}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>:null}
                 <ProgressDialog
                     title="Please wait"
                     activityIndicatorColor='blue'
@@ -87,7 +92,9 @@ export default class Logo extends React.Component {
     buttonClick = () => {
 
         if (this.state.username !== "" && this.state.password !== "") {
+
             this.openProgress();
+
             fetch('https://accounts.zoho.com/apiauthtoken/nb/create?SCOPE=Zohopeople/peopleapi&EMAIL_ID=' + this.state.username + '&PASSWORD=' + this.state.password + '&DISPLAY_NAME=davinci', {
                 method: 'POST',
 
@@ -101,8 +108,26 @@ export default class Logo extends React.Component {
                         console.log('Auth token ' + authToken);
                         this.setState({ userId: authToken });
                         this.saveUserID(this.state.userId);
+                        Toast.show('Logged In successfully ', {
+                            duration: Toast.durations.LONG,
+                            position: Toast.positions.BOTTOM,
+                            shadow: true,
+                            animation: true,
+                            hideOnPress: true,
+                            delay: 0,
+                          })
+        
                     } else {
                         console.log("Failed:" + data)
+                        Toast.show('Failed: '+data, {
+                            duration: Toast.durations.LONG,
+                            position: Toast.positions.BOTTOM,
+                            shadow: true,
+                            animation: true,
+                            hideOnPress: true,
+                            delay: 0,
+                          })
+        
                     }
                     this.hideProgress();
                 }).catch((error) => {

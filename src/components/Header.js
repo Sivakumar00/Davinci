@@ -44,10 +44,16 @@ export default class Header extends React.Component {
                 .then((responseJson) => {
                     var json = responseJson[0];
                     console.log(json.Photo);
+                    var image='';
+                    if(json.Photo.includes('api')){
+                        image=json.Photo+'&authtoken='+value;
+                    }else{
+                        image= json.Photo;
+                    }
                     this.saveUserID(json.recordId);
                     this.setState({
                         isLoading: false,
-                        image: responseJson[0].Photo,
+                        image,
                         username: json['First Name'],
                         position: responseJson[0].Title
                     })
