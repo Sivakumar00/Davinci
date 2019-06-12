@@ -10,15 +10,18 @@
       "android"	
     ],	
     "android":{	
-      "package":"com.visualbi.davinci"	
+      "package":"com.visualbi.davinci",	
+      "splash":{
+        "backgroundColor":"#ffffff",
+        "image": "./assets/splashq.png"
+      }
     },	
 
      "version": "1.0.0",	
     "orientation": "portrait",	
-    "icon": "./assets/visualbi_logo.png",	
+    "icon": "./assets/vbi_logo.png",	
     "splash": {	
-      "image": "./assets/splash.png",	
-      "resizeMode": "contain",	
+      "image": "./assets/splashq.png",	
       "backgroundColor": "#ffffff"	
     },	
     "updates": {	

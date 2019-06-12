@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, KeyboardAvoidingView, ActivityIndicator, TextIn
 import { ProgressDialog } from 'react-native-simple-dialogs';
 import { Actions } from 'react-native-router-flux';
 import { db } from '../config/db';
+import Toast from 'react-native-root-toast';
+
 
 export default class Logo extends React.Component {
 

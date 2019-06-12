@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, AsyncStorage, Text, View, FlatList, TouchableWithoutFeedback, StatusBar } from 'react-native';
+import { StyleSheet, AsyncStorage,RefreshControl,TouchableOpacity,Image, Text, View, FlatList, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import { db } from '../config/db';
 import { Card } from 'react-native-elements';
 import { Actions } from 'react-native-router-flux';
@@ -10,17 +10,21 @@ export default class EmployeeReview extends React.Component {
         super(props);
         this.state = {
             data: [],
+            isRefreshing: true,
+
         }
     }
 
     componentDidMount() {
+        this.getData()
+    }
+
+    getData() {
         const setState = this.setState.bind(this);
         AsyncStorage.getItem('recordId').then((recordId) => {
             db.ref('Review').once('value', function (snapshot) {
                 snapshot.forEach(function (_child_snapshot) {
-                    // console.log('JSon '+JSON.stringify(_child_snapshot.val()))
                     _child_snapshot.forEach(function (child) {
-                        // console.log('keyy :' + child.key +" "+JSON.stringify(Object.values( child.val())));
                         if (child.key === recordId) {
                             setState({ data: Object.values(child.val()) }, function () {
                                 console.log("data :" + JSON.stringify(this.state.data))
@@ -30,12 +34,31 @@ export default class EmployeeReview extends React.Component {
                 })
             })
         })
+        setState({isRefreshing:false})
+
 
     }
 
-    itemClick(item) {
+    ListEmpty = () => {
+        return (
+            //View to show when list is empty
+            <View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: '#262d38'
+                }}>
+                    <Text style={{ width: '100%', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 17 }}>No Reviews..!.</Text>
+                </View>
+                <TouchableOpacity onPress={this.onRefresh}>
+                    <Image style={{ width: 40, height: 40, marginTop: 100 }} source={require('../images/refresh.png')} />
+                </TouchableOpacity>
 
+            </View>
+        );
     }
+
     getColor = (item) => {
         var percent = item.result
         console.log(percent + '%')
@@ -47,10 +70,16 @@ export default class EmployeeReview extends React.Component {
             return 'green'
         }
     }
-    myReviewClick(item){
-        console.log("my review"+JSON.stringify(item))
-        if(item!==null)
-          Actions.editReview({item,view:false})
+    myReviewClick(item) {
+        console.log("my review " + JSON.stringify(item))
+        if (item !== null)
+            Actions.editReview({ item, view: false })
+    }
+
+    onRefresh = () => {
+        this.setState({ data: [] }, function () {
+            this.getData();
+        });
     }
 
     render() {
@@ -58,9 +87,16 @@ export default class EmployeeReview extends React.Component {
             <View>
                 <FlatList
                     data={this.state.data}
+                    ListEmptyComponent={this.ListEmpty}
                     extraData={this.state}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={this.onRefresh.bind(this)}
+                        />
+                    }
                     renderItem={({ item, index }) =>
-                        <TouchableWithoutFeedback onPress={()=>{this.myReviewClick(item)}}>
+                        <TouchableWithoutFeedback onPress={() => { this.myReviewClick(item) }}>
                             <Card
                                 containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5, marginBottom: 4 }}
                                 title={item.title}

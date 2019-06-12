@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, ActivityIndicator, RefreshControl, Image, TouchableOpacity, TouchableWithoutFeedback, Alert, AsyncStorage, View, StatusBar } from 'react-native';
+import { StyleSheet, Text, Platform, ActivityIndicator, TouchableHighlight, RefreshControl, Image, TouchableOpacity, TouchableWithoutFeedback, Alert, AsyncStorage, View, StatusBar, FlatList } from 'react-native';
 import { db } from '../config/db';
 import Toast from 'react-native-root-toast';
 import { Card } from 'react-native-elements';
 import Modal from "react-native-modal";
-import { FlatList } from 'react-native-gesture-handler';
 import { Actions } from 'react-native-router-flux';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 export default class QuestionList extends React.Component {
 
@@ -27,10 +27,19 @@ export default class QuestionList extends React.Component {
     this.longPressItem = this.longPressItem.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
   }
-  componentWillMount() {
+  _menu = null;
 
-  }
+  setMenuRef = ref => {
+    this._menu = ref;
+  };
 
+  hideMenu = () => {
+    this._menu.hide();
+  };
+
+  showMenu = () => {
+    this._menu.show();
+  };
   _loadInitialState = async () => {
     var resultJson = {};
     console.log("_load called")
@@ -144,8 +153,8 @@ export default class QuestionList extends React.Component {
   }
 
   longPressItem(item, index) {
-    const setState = this.setState.bind(this)
     console.log(index);
+
     Alert.alert(
       'Deleting the Assessment',
       //body
@@ -190,6 +199,8 @@ export default class QuestionList extends React.Component {
       ],
       { cancelable: false }
     );
+  
+
   }
 
   //assessment onClickListener
@@ -228,8 +239,8 @@ export default class QuestionList extends React.Component {
   ListEmpty = () => {
     return (
       //View to show when list is empty
-      <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
-        <Text style={{ alignContent: 'center', justifyContent: 'center', color: 'black', fontSize: 20, fontWeight: 'bold' }}>You don't have any Sub Ordinates.</Text>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ alignContent: 'center', justifyContent: 'center', color: 'black', fontSize: 18, marginTop: 100 }}>Loading...</Text>
       </View>
     );
   };
@@ -243,17 +254,24 @@ export default class QuestionList extends React.Component {
         justifyContent: 'center',
         backgroundColor: '#262d38'
       }}>
-        <Text style={{ alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 17 }}>No Assessments created.</Text>
+        <Text style={{ alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 17 }}>No Assessments.</Text>
       </View>
     );
   };
 
+  createPDF(item, index) {
+    console.log("item selected :" +item.key);
+
+    db.ref('Review').orderByKey().equalTo(item.key).once('value',function(snapshot){
+      console.log(JSON.stringify(snapshot.numChildren))
+    })
+  }
   render() {
 
-    //console.log('render triggred', JSON.stringify(this.state.data))
+    console.log('render triggred########')
+    console.log(this.state.data.length)
     return (
       <View style={styles.container}>
-
         <FlatList
           style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
           extraData={this.state}
@@ -266,10 +284,8 @@ export default class QuestionList extends React.Component {
             />
           }
           renderItem={({ item, index }) =>
-
             <TouchableWithoutFeedback
               onPress={() => this.itemClick(item)}
-              onLongPress={() => this.longPressItem(item, index)}
             >
               <View>
                 <Card
@@ -279,19 +295,23 @@ export default class QuestionList extends React.Component {
                   <Text style={styles.item}>
                     {item.fromdate} - {item.todate}
                   </Text>
+                  <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
+                    {this.state.isAdmin ? <TouchableOpacity onPress={()=>this.longPressItem(item, index)} style={{ alignItems: 'flex-start' }}>
+                      <Image style={{ width: 25, height: 22, }} source={require('../images/delete.png')} />
+                    </TouchableOpacity> : null}
+                    <TouchableOpacity onPress={()=>this.createPDF(item,index)} style={{ alignItems: 'flex-end' }}>
+                      <Image style={{ width: 25, height: 25, }} source={require('../images/download.png')} />
+                    </TouchableOpacity>
+                  </View>
                 </Card>
               </View>
-
             </TouchableWithoutFeedback >
           }
-
         />
-
         {this.state.isAdmin ?
           <TouchableOpacity onPress={() => this.addBtnClick()} style={styles.fab}>
             <Text style={styles.fabIcon}>+</Text>
           </TouchableOpacity> : null}
-
         <Modal isVisible={this.state.isModalVisible}>
           <View style={{ backgroundColor: 'rgba(238,238,238,1)', borderRadius: 20, padding: 10, flex: 1, justifyContent: 'center' }}>
             <Text style={{ color: '#1e88e5', fontSize: 18, marginBottom: 10, fontWeight: 'bold', textAlign: 'center' }}>Select the Sub-Ordinate</Text>
@@ -307,14 +327,12 @@ export default class QuestionList extends React.Component {
                 />
               }
               renderItem={({ item, index }) =>
-
                 <TouchableWithoutFeedback
                   onPress={() => {
                     console.log(JSON.stringify(item))
                     this.setState({ isModalVisible: false }, function () {
                       Actions.review({ item: item, assessmentItem: this.state.assessmentItem })
                     });
-
                   }}>
                   <View>
                     <Card
@@ -326,9 +344,7 @@ export default class QuestionList extends React.Component {
                       </Text>
                     </Card>
                   </View>
-
                 </TouchableWithoutFeedback >
-
               }
             />
             <TouchableOpacity style={{ backgroundColor: '#1e88e5', paddingLeft: 20, paddingTop: 10, paddingBottom: 10, borderRadius: 30, marginBottom: 10 }} onPress={() => { this.setState({ isModalVisible: false }) }} >
@@ -336,8 +352,6 @@ export default class QuestionList extends React.Component {
             </TouchableOpacity>
           </View>
         </Modal>
-
-
       </View>
 
 
@@ -356,6 +370,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'column',
     alignSelf: 'stretch',
+  },
+  containerMenu: {
+    flex: 1,
+    paddingTop: 20,
+
   },
 
   item: {

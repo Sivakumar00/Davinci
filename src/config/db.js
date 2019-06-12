@@ -1,4 +1,6 @@
 import Firebase from 'firebase';
+import '@firebase/functions';
+
 var firebaseConfig = {
     apiKey: "AIzaSyBLsefCtJHofB-CKg5lfFuCO_56xQDgDTM",
     authDomain: "davinci-00.firebaseapp.com",
@@ -11,3 +13,4 @@ var firebaseConfig = {
   // Initialize Firebase
  let app = Firebase.initializeApp(firebaseConfig);
  export const db = app.database();
+ export const cloud_function = app.functions();

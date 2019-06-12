@@ -3,6 +3,9 @@ package com.davinci;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.pdf.generator.PDFGeneratorPackage;
+import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
+import com.github.wumke.RNExitApp.RNExitAppPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -22,7 +25,10 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage()
+          new MainReactPackage(),
+            new PDFGeneratorPackage(),
+            new RNHTMLtoPDFPackage(),
+            new RNExitAppPackage()
       );
     }
 
