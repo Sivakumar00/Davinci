@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, Platform, ActivityIndicator, TouchableHighlight, RefreshControl, Image, TouchableOpacity, TouchableWithoutFeedback, Alert, AsyncStorage, View, StatusBar, FlatList } from 'react-native';
 import { db } from '../config/db';
 import Toast from 'react-native-root-toast';
-import { Card } from 'react-native-elements';
+import { Card, CheckBox } from 'react-native-elements';
 import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+import * as FileSystem from 'expo-file-system';
+
 
 export default class QuestionList extends React.Component {
 
@@ -16,12 +18,14 @@ export default class QuestionList extends React.Component {
       recordId: '',
       isAdmin: false,
       visible: false,
-      mydata: [],
+      mydata: {},
       reviewedList: [],
       isRefreshing: true,
       question_id: '',
+      review: [],
       isModalVisible: false,
       assessmentItem: {},
+      printData: [],
     }
 
     this.longPressItem = this.longPressItem.bind(this);
@@ -118,13 +122,27 @@ export default class QuestionList extends React.Component {
 
       snapshot.forEach(function (childSnapshot) {
         childSnapshot.forEach(function (_childSnapshot) {
-          console.log(_childSnapshot.child('createdby').val());
+         // console.log(_childSnapshot.child('createdby').val());
           tempArr.push(_childSnapshot.val())
-          console.log("value " + JSON.stringify(_childSnapshot.val()));
+        //  console.log("value " + JSON.stringify(_childSnapshot.val()));
         })
       })
 
     })
+    var json=[];
+    db.ref('Review').once('value', function (snapshot) {
+
+      Object.values(snapshot.val()).forEach(function (val) {
+        Object.values(val).forEach(function (val1) {
+          json.push(Object.values(val1)[0]);
+        })
+      })
+
+      setState({ review: json }, function () {
+       // console.log(JSON.stringify(this.state.review))
+      })
+    })
+
     var reviewedList = [];
     console.log('record firebase ' + this.state.recordId)
     AsyncStorage.getItem('recordId').then((recordId) => {
@@ -135,7 +153,7 @@ export default class QuestionList extends React.Component {
           childSnapshot.forEach(function (_child) {
             reviewedList.push(childSnapshot.key + " " + _child.child('question_id').val())
             setState({ reviewedList }, function () {
-              console.log("review /list :" + JSON.stringify(this.state.reviewedList))
+              //console.log("review /list :" + JSON.stringify(this.state.reviewedList))
             })
           })
 
@@ -153,7 +171,7 @@ export default class QuestionList extends React.Component {
   }
 
   longPressItem(item, index) {
-    console.log(index);
+    //console.log(index);
 
     Alert.alert(
       'Deleting the Assessment',
@@ -199,7 +217,7 @@ export default class QuestionList extends React.Component {
       ],
       { cancelable: false }
     );
-  
+
 
   }
 
@@ -259,12 +277,47 @@ export default class QuestionList extends React.Component {
     );
   };
 
-  createPDF(item, index) {
-    console.log("item selected :" +item.key);
+  
+   createPDF(item, index) {
+    console.log("item selected :" + item.key);
+    var json = [];
+    for(var obj of this.state.review){
+      if(obj.question_id === item.key){
+        json.push(obj);
+      }
+    }
+    //console.log("print data set" + JSON.stringify(json))
 
-    db.ref('Review').orderByKey().equalTo(item.key).once('value',function(snapshot){
-      console.log(JSON.stringify(snapshot.numChildren))
-    })
+    var htmlText = '<html><head><style> hr{display: block;height: 1px;border: 0;border-top: 1px solid #000;margin: 1em 0;padding: 0;}table {font-family: arial, sans-serif; border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px}tr:nth-child(even) {background-color: #dddddd;}</style></head><body>';
+    htmlText = htmlText + '<h1 style="color:grey;font-family:Lucida Sans;text-align:center">' + json[0].title + ' report</h1><h2 style="color:grey;font-family:Lucida Sans;text-align:center">Date:' + json[0].startdate + ' -- ' + json[0].enddate + '31-JUN-2019</h2><br>'
+    for (var obj of json) {
+      htmlText = htmlText + '<h3 style="font-family:Lucida Sans;text-align:center">' + obj.name + '</h3><h3 style="color:grey;font-family:Lucida Sans;text-align:center">' + obj.email + '</h4><br>'
+      htmlText = htmlText + '<table><tr><th>Question</th><th>Rating</th><th>Comments</th></tr>'
+      for (var _obj of obj.response) {
+        htmlText = htmlText + '<tr><td>' + _obj.question + '</td><td>' + _obj.rating + ' / 5</td><td>' + _obj.comments + '</td></tr>'
+      }
+      htmlText = htmlText + '</table><h2 style="color:green;text-align:center">Total percent acquired:' + Math.round(obj.result) + '</h2><br><hr/>'
+      
+    }
+    htmlText = htmlText + '</body></html>'
+
+    console.log(htmlText);
+    fetch('http://localhost:5000/davinci-00/us-central1/widgets/pdf',
+    {
+      method:'POST',
+      headers:{
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body:JSON.stringify({
+        html:htmlText
+      })
+    }
+    ).then((response)=>response.json())
+    .then((responseJson)=>{
+      console.log(JSON.stringify(responseJson.html));
+    }).catch((err)=>console.error(err))
+
   }
   render() {
 
@@ -296,10 +349,10 @@ export default class QuestionList extends React.Component {
                     {item.fromdate} - {item.todate}
                   </Text>
                   <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
-                    {this.state.isAdmin ? <TouchableOpacity onPress={()=>this.longPressItem(item, index)} style={{ alignItems: 'flex-start' }}>
+                    {this.state.isAdmin ? <TouchableOpacity onPress={() => this.longPressItem(item, index)} style={{ alignItems: 'flex-start' }}>
                       <Image style={{ width: 25, height: 22, }} source={require('../images/delete.png')} />
                     </TouchableOpacity> : null}
-                    <TouchableOpacity onPress={()=>this.createPDF(item,index)} style={{ alignItems: 'flex-end' }}>
+                    <TouchableOpacity onPress={() => this.createPDF(item, index)} style={{ alignItems: 'flex-end' }}>
                       <Image style={{ width: 25, height: 25, }} source={require('../images/download.png')} />
                     </TouchableOpacity>
                   </View>
