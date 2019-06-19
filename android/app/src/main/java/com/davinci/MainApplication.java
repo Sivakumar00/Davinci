@@ -3,6 +3,8 @@ package com.davinci;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.pdf.generator.PDFGeneratorPackage;
 import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
@@ -26,6 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFSPackage(),
+            new RNFetchBlobPackage(),
             new PDFGeneratorPackage(),
             new RNHTMLtoPDFPackage(),
             new RNExitAppPackage()

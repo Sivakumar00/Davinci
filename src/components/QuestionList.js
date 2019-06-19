@@ -6,7 +6,10 @@ import { Card, CheckBox } from 'react-native-elements';
 import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
-import * as FileSystem from 'expo-file-system';
+import { Constants, FileSystem, Permissions } from 'expo';
+import { ProgressDialog } from 'react-native-simple-dialogs';
+
+
 
 
 export default class QuestionList extends React.Component {
@@ -19,10 +22,12 @@ export default class QuestionList extends React.Component {
       isAdmin: false,
       visible: false,
       mydata: {},
+      hasPermission: null,
       reviewedList: [],
       isRefreshing: true,
       question_id: '',
       review: [],
+      showProgress: false,
       isModalVisible: false,
       assessmentItem: {},
       printData: [],
@@ -44,6 +49,8 @@ export default class QuestionList extends React.Component {
   showMenu = () => {
     this._menu.show();
   };
+
+  
   _loadInitialState = async () => {
     var resultJson = {};
     console.log("_load called")
@@ -92,6 +99,12 @@ export default class QuestionList extends React.Component {
 
   }
 
+  async askPermission() {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    this.setState({ hasPermission: status === 'granted' });
+
+  }
+
   componentDidMount() {
 
     const setState = this.setState.bind(this)
@@ -122,24 +135,24 @@ export default class QuestionList extends React.Component {
 
       snapshot.forEach(function (childSnapshot) {
         childSnapshot.forEach(function (_childSnapshot) {
-         // console.log(_childSnapshot.child('createdby').val());
+          // console.log(_childSnapshot.child('createdby').val());
           tempArr.push(_childSnapshot.val())
-        //  console.log("value " + JSON.stringify(_childSnapshot.val()));
+          //  console.log("value " + JSON.stringify(_childSnapshot.val()));
         })
       })
 
     })
-    var json=[];
+    var json = [];
     db.ref('Review').once('value', function (snapshot) {
-
-      Object.values(snapshot.val()).forEach(function (val) {
-        Object.values(val).forEach(function (val1) {
-          json.push(Object.values(val1)[0]);
+      if (snapshot.exists())
+        Object.values(snapshot.val()).forEach(function (val) {
+          Object.values(val).forEach(function (val1) {
+            json.push(Object.values(val1)[0]);
+          })
         })
-      })
 
       setState({ review: json }, function () {
-       // console.log(JSON.stringify(this.state.review))
+        // console.log(JSON.stringify(this.state.review))
       })
     })
 
@@ -277,52 +290,105 @@ export default class QuestionList extends React.Component {
     );
   };
 
+
+  createPDF(item, index) {
+    this.setState({showProgress:true},function(){
+      console.log("item selected :" + item.key);
+      var json = [];
   
-   createPDF(item, index) {
-    console.log("item selected :" + item.key);
-    var json = [];
-    for(var obj of this.state.review){
-      if(obj.question_id === item.key){
-        json.push(obj);
+      for (var obj of this.state.review) {
+        if (obj.question_id === item.key) {
+          json.push(obj);
+        }
       }
-    }
-    //console.log("print data set" + JSON.stringify(json))
+      //console.log("print data set" + JSON.stringify(json))
+      if (json.length > 0) {
+        var htmlText = '<html><head><style> hr{display: block;height: 1px;border: 0;border-top: 1px solid #000;margin: 1em 0;padding: 0;}table {font-family: arial, sans-serif; border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px}tr:nth-child(even) {background-color: #dddddd;}</style></head><body>';
+        htmlText = htmlText + '<h1 style=\"color:grey;font-family:Lucida Sans;text-align:center\">' + json[0].title + ' report</h1><h2 style=\"color:grey;font-family:Lucida Sans;text-align:center\">Date:' + json[0].startdate + ' -- ' + json[0].enddate + '</h2><br>'
+        for (var obj of json) {
+          htmlText = htmlText + '<h3 style=\"font-family:Lucida Sans;text-align:center\">' + obj.name + '</h3><h3 style=\"color:grey;font-family:Lucida Sans;text-align:center\">' + obj.email + '</h4><br>'
+          htmlText = htmlText + '<table><tr><th>Question</th><th>Rating</th><th>Comments</th></tr>'
+          for (var _obj of obj.response) {
+            htmlText = htmlText + '<tr><td>' + _obj.question + '</td><td>' + _obj.rating + ' / 5</td><td>' + _obj.comments + '</td></tr>'
+          }
+          htmlText = htmlText + '</table><h2 style=\"color:green;text-align:center\">Total percent acquired:' + Math.round(obj.result) + ' %</h2><br><hr/>'
+  
+        }
+        htmlText = htmlText + '</body></html>'
+  
+        console.log(htmlText);
+        AsyncStorage.getItem('userEmail').then((email) => {
+          fetch('https://us-central1-davinci-00-1.cloudfunctions.net/widgets/pdf',
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                html: htmlText,
+                email: 'sivakumara@visualbi.com',
+                subject: json[0].title
+              })
+            }
+          ).then((response) => response.json())
+            .then((responseJson) => {
+              this.setState({showProgress:false})    
+              console.log(JSON.stringify(responseJson));
+              if(responseJson.accepted.length>0){
+                Toast.show('Report PDF sent to mail ..!', {
+                  duration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,
+                })
+              }
+              else{
+                this.setState({showProgress:false})    
 
-    var htmlText = '<html><head><style> hr{display: block;height: 1px;border: 0;border-top: 1px solid #000;margin: 1em 0;padding: 0;}table {font-family: arial, sans-serif; border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px}tr:nth-child(even) {background-color: #dddddd;}</style></head><body>';
-    htmlText = htmlText + '<h1 style="color:grey;font-family:Lucida Sans;text-align:center">' + json[0].title + ' report</h1><h2 style="color:grey;font-family:Lucida Sans;text-align:center">Date:' + json[0].startdate + ' -- ' + json[0].enddate + '31-JUN-2019</h2><br>'
-    for (var obj of json) {
-      htmlText = htmlText + '<h3 style="font-family:Lucida Sans;text-align:center">' + obj.name + '</h3><h3 style="color:grey;font-family:Lucida Sans;text-align:center">' + obj.email + '</h4><br>'
-      htmlText = htmlText + '<table><tr><th>Question</th><th>Rating</th><th>Comments</th></tr>'
-      for (var _obj of obj.response) {
-        htmlText = htmlText + '<tr><td>' + _obj.question + '</td><td>' + _obj.rating + ' / 5</td><td>' + _obj.comments + '</td></tr>'
+              Toast.show('Something went wrong ..!', {
+                duration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+              })
+            }
+            }).catch((err) =>{
+              Toast.show(err, {
+                duration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: true,
+                delay: 0,
+              })
+              console.error(err)
+            })
+  
+        })
+      } else {
+        Toast.show('No reviews found ..!', {
+          duration: Toast.durations.LONG,
+          position: Toast.positions.BOTTOM,
+          shadow: true,
+          animation: true,
+          hideOnPress: true,
+          delay: 0,
+        })
+        this.setState({showProgress:false})    
+
       }
-      htmlText = htmlText + '</table><h2 style="color:green;text-align:center">Total percent acquired:' + Math.round(obj.result) + '</h2><br><hr/>'
-      
-    }
-    htmlText = htmlText + '</body></html>'
-
-    console.log(htmlText);
-    fetch('http://localhost:5000/davinci-00/us-central1/widgets/pdf',
-    {
-      method:'POST',
-      headers:{
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body:JSON.stringify({
-        html:htmlText
-      })
-    }
-    ).then((response)=>response.json())
-    .then((responseJson)=>{
-      console.log(JSON.stringify(responseJson.html));
-    }).catch((err)=>console.error(err))
-
+    })
   }
   render() {
 
     console.log('render triggred########')
     console.log(this.state.data.length)
+
     return (
       <View style={styles.container}>
         <FlatList
@@ -348,12 +414,12 @@ export default class QuestionList extends React.Component {
                   <Text style={styles.item}>
                     {item.fromdate} - {item.todate}
                   </Text>
-                  <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'space-around' }}>
-                    {this.state.isAdmin ? <TouchableOpacity onPress={() => this.longPressItem(item, index)} style={{ alignItems: 'flex-start' }}>
+                  <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-around' }}>
+                    {this.state.isAdmin ? <TouchableOpacity onPress={() => this.longPressItem(item, index)} style={{ width: 30, height: 30, alignItems: 'flex-start' }}>
                       <Image style={{ width: 25, height: 22, }} source={require('../images/delete.png')} />
                     </TouchableOpacity> : null}
-                    <TouchableOpacity onPress={() => this.createPDF(item, index)} style={{ alignItems: 'flex-end' }}>
-                      <Image style={{ width: 25, height: 25, }} source={require('../images/download.png')} />
+                    <TouchableOpacity onPress={() => this.createPDF(item, index)} style={{ width: 30, height: 30, alignItems: 'flex-end' }}>
+                      <Image style={{ width: 25, height: 25, }} source={require('../images/mail-attachment.png')} />
                     </TouchableOpacity>
                   </View>
                 </Card>
@@ -361,6 +427,15 @@ export default class QuestionList extends React.Component {
             </TouchableWithoutFeedback >
           }
         />
+        <ProgressDialog
+          title="Please wait"
+          activityIndicatorColor='blue'
+          activityIndicatorSize="large"
+          animationType="slide"
+          message="loading"
+          visible={this.state.showProgress}
+        />
+
         {this.state.isAdmin ?
           <TouchableOpacity onPress={() => this.addBtnClick()} style={styles.fab}>
             <Text style={styles.fabIcon}>+</Text>

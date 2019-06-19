@@ -41,6 +41,8 @@
 		398B7E70C9204B0AB098BC97 /* libRNHTMLtoPDF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0573F51BCD6744309C58D919 /* libRNHTMLtoPDF.a */; };
 		CADEB3D9C9694AC7A48C0DBD /* RNHTMLtoPDFTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 267C31FF36464DE7B1CBE35A /* RNHTMLtoPDFTests.xctest */; };
 		7696B69ED21A4F9F8FA5A960 /* libPDFGenerator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10220DA46E474CB6908C5159 /* libPDFGenerator.a */; };
+		29F5C205452A47AE92EE6127 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C04CA914C26D4EAD8164448E /* libRNFetchBlob.a */; };
+		1E14F169D27246D28A9640F4 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BBEB11F3AF82407EBC2345B9 /* libRNFS.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -353,6 +355,10 @@
 		267C31FF36464DE7B1CBE35A /* RNHTMLtoPDFTests.xctest */ = {isa = PBXFileReference; name = "RNHTMLtoPDFTests.xctest"; path = "RNHTMLtoPDFTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
 		0047381F8A8340BFAEE69465 /* RNPDFGenerator.xcodeproj */ = {isa = PBXFileReference; name = "RNPDFGenerator.xcodeproj"; path = "../node_modules/rn-pdf-generator/ios/RNPDFGenerator.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		10220DA46E474CB6908C5159 /* libPDFGenerator.a */ = {isa = PBXFileReference; name = "libPDFGenerator.a"; path = "libPDFGenerator.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		A5421510985142BD9FD02CF6 /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; name = "RNFetchBlob.xcodeproj"; path = "../node_modules/react-native-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		C04CA914C26D4EAD8164448E /* libRNFetchBlob.a */ = {isa = PBXFileReference; name = "libRNFetchBlob.a"; path = "libRNFetchBlob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		20C60F9B4A25468CB7967CB3 /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		BBEB11F3AF82407EBC2345B9 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -384,6 +390,8 @@
 				398B7E70C9204B0AB098BC97 /* libRNHTMLtoPDF.a in Frameworks */,
 				CADEB3D9C9694AC7A48C0DBD /* RNHTMLtoPDFTests.xctest in Resources */,
 				7696B69ED21A4F9F8FA5A960 /* libPDFGenerator.a in Frameworks */,
+				29F5C205452A47AE92EE6127 /* libRNFetchBlob.a in Frameworks */,
+				1E14F169D27246D28A9640F4 /* libRNFS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -573,6 +581,8 @@
 				648BFD2FFBC641FDAB05212D /* RNExitApp.xcodeproj */,
 				EBB1CF74CD4C4959AF468F4A /* RNHTMLtoPDF.xcodeproj */,
 				0047381F8A8340BFAEE69465 /* RNPDFGenerator.xcodeproj */,
+				A5421510985142BD9FD02CF6 /* RNFetchBlob.xcodeproj */,
+				20C60F9B4A25468CB7967CB3 /* RNFS.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1204,11 +1214,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Debug;
@@ -1234,11 +1248,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Release;
@@ -1263,6 +1281,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Debug;
@@ -1286,6 +1306,8 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Release;
@@ -1319,11 +1341,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Debug;
@@ -1357,11 +1383,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Release;
@@ -1394,11 +1424,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Debug;
@@ -1431,11 +1465,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-html-to-pdf/ios/**",
 					"$(SRCROOT)/../node_modules/rn-pdf-generator/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fetch-blob/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
 				);
 			};
 			name = Release;
