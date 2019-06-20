@@ -4,24 +4,12 @@ import Logo from '../components/Logo'
 import LoginForm from '../components/LoginForm'
 import { Actions } from 'react-native-router-flux'; 
 
-
-
 export default class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
         <Logo/>
         <LoginForm type="Login"/>
-        <View style={styles.container}>
-          <Text style={styles.signuptext}>
-            Don't have an account yet?
-          </Text>
-          <TouchableOpacity  onPress={this.signup}>
-          <Text style={styles.signup}>
-            Sign Up
-          </Text>
-          </TouchableOpacity>
-        </View>
       </View>
     );
 

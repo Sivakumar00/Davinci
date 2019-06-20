@@ -43,7 +43,7 @@ export default class Home extends React.Component {
               AsyncStorage.setItem('isManager',"false")
             })
           }else{
-            AsyncStorage.setItem('isManager',"true")
+            AsyncStorage.setItem('isManager',"true" )
           }
         })
 

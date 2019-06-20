@@ -327,7 +327,7 @@ export default class QuestionList extends React.Component {
               },
               body: JSON.stringify({
                 html: htmlText,
-                email: 'sivakumara@visualbi.com',
+                email: email,
                 subject: json[0].title
               })
             }
