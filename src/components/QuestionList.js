@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, Platform, ActivityIndicator, TouchableHighlight, RefreshControl, Image, TouchableOpacity, TouchableWithoutFeedback, Alert, AsyncStorage, View, StatusBar, FlatList } from 'react-native';
 import { db } from '../config/db';
 import Toast from 'react-native-root-toast';
-import { Card, CheckBox } from 'react-native-elements';
+import { Card, CheckBox, Overlay } from 'react-native-elements';
 import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
-import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import { Constants, FileSystem, Permissions } from 'expo';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 
@@ -24,8 +23,10 @@ export default class QuestionList extends React.Component {
       mydata: {},
       hasPermission: null,
       reviewedList: [],
+      modelDisplay: false,
       isRefreshing: true,
       question_id: '',
+      btnDisable:false,
       review: [],
       showProgress: false,
       isModalVisible: false,
@@ -50,7 +51,7 @@ export default class QuestionList extends React.Component {
     this._menu.show();
   };
 
-  
+
   _loadInitialState = async () => {
     var resultJson = {};
     console.log("_load called")
@@ -180,7 +181,13 @@ export default class QuestionList extends React.Component {
   }
 
   addBtnClick() {
-    Actions.Question();
+    this.setState({ modelDisplay: true })
+    if (this.state.data.length <= 0) {
+      this.setState({ btnDisable: true })
+    } else{
+      this.setState({btnDisable:false})
+    }
+    //Actions.Question();
   }
 
   longPressItem(item, index) {
@@ -199,6 +206,7 @@ export default class QuestionList extends React.Component {
               console.log("difference " + recordId.toString() + " " + rec_id)
               if (recordId.toString() === rec_id) {
                 db.ref('/Questions/' + rec_id + '/' + key).remove().then(function () {
+                  this.getData
                   Toast.show('Assessment Removed ..! Swipe to refresh', {
                     duration: Toast.durations.LONG,
                     position: Toast.positions.BOTTOM,
@@ -207,7 +215,6 @@ export default class QuestionList extends React.Component {
                     hideOnPress: true,
                     delay: 0,
                   })
-                  //setState({isRefreshing:true})
                 }).catch((error) => {
                   console.log("ERROR " + error)
                   Toast.show('Problem Occured :' + error)
@@ -292,10 +299,10 @@ export default class QuestionList extends React.Component {
 
 
   createPDF(item, index) {
-    this.setState({showProgress:true},function(){
+    this.setState({ showProgress: true }, function () {
       console.log("item selected :" + item.key);
       var json = [];
-  
+
       for (var obj of this.state.review) {
         if (obj.question_id === item.key) {
           json.push(obj);
@@ -312,10 +319,10 @@ export default class QuestionList extends React.Component {
             htmlText = htmlText + '<tr><td>' + _obj.question + '</td><td>' + _obj.rating + ' / 5</td><td>' + _obj.comments + '</td></tr>'
           }
           htmlText = htmlText + '</table><h3 style=\"color:green;text-align:center\">Total percent acquired:' + Math.round(obj.result) + ' %</h3><br><hr/>'
-  
+
         }
         htmlText = htmlText + '</body></html>'
-  
+
         console.log(htmlText);
         AsyncStorage.getItem('userEmail').then((email) => {
           fetch('https://us-central1-davinci-00-1.cloudfunctions.net/widgets/pdf',
@@ -333,9 +340,9 @@ export default class QuestionList extends React.Component {
             }
           ).then((response) => response.json())
             .then((responseJson) => {
-              this.setState({showProgress:false})    
+              this.setState({ showProgress: false })
               console.log(JSON.stringify(responseJson));
-              if(responseJson.accepted.length>0){
+              if (responseJson.accepted.length > 0) {
                 Toast.show('Report PDF sent to mail ..!', {
                   duration: Toast.durations.LONG,
                   position: Toast.positions.BOTTOM,
@@ -345,19 +352,19 @@ export default class QuestionList extends React.Component {
                   delay: 0,
                 })
               }
-              else{
-                this.setState({showProgress:false})    
+              else {
+                this.setState({ showProgress: false })
 
-              Toast.show('Something went wrong ..!', {
-                duration: Toast.durations.LONG,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-              })
-            }
-            }).catch((err) =>{
+                Toast.show('Something went wrong ..!', {
+                  duration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0,
+                })
+              }
+            }).catch((err) => {
               Toast.show(err, {
                 duration: Toast.durations.LONG,
                 position: Toast.positions.BOTTOM,
@@ -368,7 +375,7 @@ export default class QuestionList extends React.Component {
               })
               console.error(err)
             })
-  
+
         })
       } else {
         Toast.show('No reviews found ..!', {
@@ -379,7 +386,7 @@ export default class QuestionList extends React.Component {
           hideOnPress: true,
           delay: 0,
         })
-        this.setState({showProgress:false})    
+        this.setState({ showProgress: false })
 
       }
     })
@@ -394,7 +401,7 @@ export default class QuestionList extends React.Component {
         <FlatList
           style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
           extraData={this.state}
-          data={this.state.data}
+          data={this.state.data.reverse()}
           ListEmptyComponent={this.ListEmptyAssessment}
           refreshControl={
             <RefreshControl
@@ -435,6 +442,53 @@ export default class QuestionList extends React.Component {
           message="loading"
           visible={this.state.showProgress}
         />
+        {this.state.modelDisplay ?
+          <Overlay
+            justifyContent='center'
+            isVisible={this.state.modelDisplay}
+            windowBackgroundColor="rgba(255, 255, 255, .7)"
+            overlayBackgroundColor="#c9d3e2"
+            width={300}
+            height="auto"
+          >
+            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={{ color: '#455a64', fontSize: 21, fontWeight: 'bold' }}>Select Option </Text>
+              <View
+                style={{
+                  borderBottomColor: 'black',
+                  borderBottomWidth: 1,
+                }}
+              />
+
+              <TouchableOpacity disabled={this.state.btnDisable} onPress={() => {
+                this.setState({ modelDisplay: false })
+                Actions.importQues();
+              }}
+              activeOpacity = { .5 } 
+              >
+                <Text style={{ color:this.state.btnDisable ? 'grey':'black', textAlign: 'center', marginBottom: 10, fontSize: 19, marginTop: 20 }}>Question Template</Text>
+              </TouchableOpacity >
+              <View
+                style={{
+                  width: '80%',
+                  borderBottomColor: 'grey',
+                  borderBottomWidth: 1,
+                }}
+              />
+              <TouchableOpacity onPress={() => {
+                this.setState({ modelDisplay: false })
+                Actions.Question();
+              }}>
+                <Text style={{ color: 'black', fontSize: 19, textAlign: 'center', marginTop: 10 }}>Create new Questions</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{ marginTop: 20, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#455a64', width: 250, height: 40 }}
+                onPress={() => this.setState({ modelDisplay: false })}>
+                <Text style={{ color: 'white', textAlign: 'center', fontSize: 18 }}>Cancel</Text>
+              </TouchableOpacity>
+
+
+            </View>
+          </Overlay> : null}
 
         {this.state.isAdmin ?
           <TouchableOpacity onPress={() => this.addBtnClick()} style={styles.fab}>

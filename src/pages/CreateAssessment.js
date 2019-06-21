@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import { StyleSheet, Button, NetInfo, Image, Dimensions, TouchableWithoutFeedback, AsyncStorage, BackHandler, TouchableOpacity, TextInput, Text, View, StatusBar } from 'react-native';
 import { db } from '../config/db'
 import { Card } from 'react-native-elements';
@@ -174,7 +174,7 @@ export default class CreateAssessment extends React.Component {
 
     this.setState(
       {
-        editItem: item,
+        editItem: item, 
         editIndex: index,
         getEditQuestion: item.question,
         getEditWeight: item.weightage,
@@ -185,7 +185,7 @@ export default class CreateAssessment extends React.Component {
   }
 
   importQuestions(){
-
+    Actions.importQues()
   }
   reSubmitQues() {
     if (this.state.getEditQuestion !== '' && this.state.getEditWeight !== '') {
@@ -323,7 +323,6 @@ export default class CreateAssessment extends React.Component {
           <FlatList
             style={{ height: '100%', alignSelf: 'stretch', flexDirection: 'column', }}
             extraData={this.state}
-            inverted
             data={this.state.questions}
             scrollEnabled={true}
             renderItem={({ item, index }) =>
