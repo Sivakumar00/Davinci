@@ -309,10 +309,6 @@ export default class CreateAssessment extends React.Component {
         <TouchableOpacity style={styles.button} onPress={this.addBtnClick}>
           <Text style={styles.buttontext}>{this.state.buttontext}</Text>
         </TouchableOpacity>
-        {this.state.importQues ? <Text style={{color:'white',fontSize:15,textAlign:'center'}}>(OR)</Text>:null}
-        {this.state.importQues? <TouchableOpacity style={styles.button} onPress={this.importQuestions}>
-          <Text style={styles.buttontext}>Import Questions</Text>
-        </TouchableOpacity>:null}
         {this.state.finishBtn ?
           <TouchableOpacity style={styles.button} onPress={this.finishBtn}>
             <Text style={styles.buttontext}>Finish</Text>

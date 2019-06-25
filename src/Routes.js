@@ -9,6 +9,7 @@ import CreateAssessment from './pages/CreateAssessment'
 import Review from './pages/Review';
 import ImportQues from  './pages/ImportQues'
 import EditReview from './pages/EditReview';
+import EditTemplate from './pages/EditTemplate'
 
 const reducerCreate = params => {
 
@@ -39,6 +40,7 @@ export default class Routes extends React.Component{
                     <Scene key="review" component = {Review} title = "Review" back={true}/>
                     <Scene key="editReview" component = {EditReview} title="Edit Review" back ={true}/>
                     <Scene key="importQues" component={ImportQues} title ="Import Questions" back={true}/>
+                    <Scene key='editTemplate' component={EditTemplate} title = "Edit Template" back={true}/>
                 </Stack>
             </Router>
         )
