@@ -1,8 +1,6 @@
 import React from 'react';
 import { StyleSheet,NetInfo,Dimensions, Text, View,AsyncStorage,TouchableOpacity,BackHandler,Platform,Alert } from 'react-native';
-import Header from '../components/Header' 
-import Assessment from '../components/Assessment';
-import RNExitApp from 'react-native-exit-app';
+import HeaderPro from '../components/HeaderPro' 
 import BottomList from '../components/BottomList';
 import { Actions } from 'react-native-router-flux';
 const { width } = Dimensions.get('window');
@@ -21,8 +19,8 @@ export default class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-         
-            <Header/>
+            
+            <HeaderPro/>
             {!this.state.isConnected?
                 <View style={styles.offlineContainer}>
                 <Text style={styles.offlineText}>No Internet Connection</Text>
@@ -77,11 +75,8 @@ export default class Home extends React.Component {
   componentWillUnmount(){
     BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton);
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
-
   }
-
 }
-
 
 const styles = StyleSheet.create({
   container:{

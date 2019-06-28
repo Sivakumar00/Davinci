@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Alert, Text, View, Image, ImageBackground, AsyncStorage, ActivityIndicator } from 'react-native';
 import { db } from '../config/db';
 import { Actions } from 'react-native-router-flux';
-
-export default class Header extends React.Component {
+import { Header } from 'react-native-elements';
+export default class HeaderPro extends React.Component {
 
     constructor(props) {
         super(props)
@@ -37,18 +37,18 @@ export default class Header extends React.Component {
             this.setState({ userId: value });
             this.setState({ userEmail: userEmail });
             console.log(this.state.userEmail);
-            var endpoint='https://people.zoho.com/people/api/forms/P_EmployeeView/records?authtoken=' + value + '&searchColumn=EMPLOYEEMAILALIAS&searchValue=' + this.state.userEmail
-            console.log("endpoint :"+endpoint)
+            var endpoint = 'https://people.zoho.com/people/api/forms/P_EmployeeView/records?authtoken=' + value + '&searchColumn=EMPLOYEEMAILALIAS&searchValue=' + this.state.userEmail
+            console.log("endpoint :" + endpoint)
             fetch(endpoint)
                 .then((response) => response.json())
                 .then((responseJson) => {
                     var json = responseJson[0];
                     console.log(json.Photo);
-                    var image='';
-                    if(json.Photo.includes('api')){
-                        image=json.Photo+'&authtoken='+value;
-                    }else{
-                        image= json.Photo;
+                    var image = '';
+                    if (json.Photo.includes('api')) {
+                        image = json.Photo + '&authtoken=' + value;
+                    } else {
+                        image = json.Photo;
                     }
                     this.saveUserID(json.recordId);
                     this.setState({
@@ -66,7 +66,7 @@ export default class Header extends React.Component {
                     }
 
                     AsyncStorage.setItem('recordId', json.recordId);
-                    console.log("record Id "+json.recordId);
+                    console.log("record Id " + json.recordId);
                     db.ref('/Users/' + json.recordId).once('value', function (snapshot) {
                         if (!snapshot.exists()) {
                             db.ref('/Users/' + json.recordId).set(storeData)
@@ -94,22 +94,22 @@ export default class Header extends React.Component {
                 style: 'cancel'
             }, {
                 text: 'OK',
-                onPress:this.logout
+                onPress: this.logout
             }], {
                 cancelable: false
             }
-        )  
+        )
     }
 
-    logout = ()=>{
+    logout = () => {
         console.log("logout entered")
-        AsyncStorage.removeItem('user').then((err)=>{
+        AsyncStorage.removeItem('user').then((err) => {
             console.log("user id removed !!")
         })
-        AsyncStorage.removeItem('recordId').then((err)=>{
+        AsyncStorage.removeItem('recordId').then((err) => {
             console.log("user record id removed !!")
         })
-        AsyncStorage.removeItem('userEmail').then((Err)=>{
+        AsyncStorage.removeItem('userEmail').then((Err) => {
             console.log("user email removed !!")
         })
         Actions.login();
@@ -129,22 +129,33 @@ export default class Header extends React.Component {
     render() {
         return (
 
-            <ImageBackground style={styles.headerbackground} source={require('../images/visualbi_logo.png')}>
-                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', }}>
-                        <View style={styles.header}>
-                            <View style={styles.profilePicWrap}>
-                                <Image style={styles.profilepic} source={{ uri: this.state.image }}></Image>
-                            </View>
+            <View style={styles.headerbackground} >
+                <View style={{ flex: 1 }}>
+                    <Header
+                        backgroundColor="transparent"
+                        centerComponent={{ text: 'D A V I N C I', style: { fontSize: 20, fontWeight: 'bold', color: '#fff' } }}
+                    />
+                </View>
+                <View style={{
+                    flex: 1, justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    <View style={styles.header}>
+                        <View style={styles.profilePicWrap}>
+                            <Image style={styles.profilepic} source={{ uri: this.state.image }}></Image>
+                        </View>
+                        <View style={{ flex: 1, width: '70%', marginLeft: 20 }}>
                             <Text style={styles.name}>{this.state.username}</Text>
                             <Text style={styles.position}>{this.state.position}</Text>
-                            <TouchableOpacity style={{backgroundColor:'white',marginTop:5,borderRadius:10}} onPress={this.onLogout}>
-                                <Text style={{color:'red',paddingLeft:5,paddingRight:5,paddingTop:2,paddingBottom:3,fontSize:14}}>Logout</Text>
-                            </TouchableOpacity>
+                            {!this.state.isLoading?<TouchableOpacity style={{ backgroundColor: 'white', marginTop: 5, borderRadius: 10, width: 60 }} onPress={this.onLogout}>
+                                <Text style={{ color: 'red', paddingLeft: 5, textAlign: 'center', paddingRight: 5, paddingTop: 2, paddingBottom: 3, fontSize: 14 }}>Logout</Text>
+                            </TouchableOpacity>:null}
                             <ActivityIndicator animating={this.state.isLoading} />
-
                         </View>
+
+                    </View>
                 </View>
-            </ImageBackground>
+            </View>
         );
     }
 }
@@ -155,6 +166,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: null,
         maxHeight: 200,
+        backgroundColor: '#262d38',
         alignSelf: 'stretch'
     },
     header: {
@@ -162,18 +174,19 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'center',
         padding: 20,
+        flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'stretch',
         maxHeight: 200,
+        marginBottom:20
     },
     profilePicWrap: {
-        width: 100,
+        width: '30%',
         height: 100,
-        marginTop: 30,
         borderRadius: 100,
         alignItems: 'center',
         borderColor: 'rgba(0,0,0,0.4)',
-        borderWidth: 16,
+        borderWidth: 10,
     },
     profilepic: {
         flex: 1,

@@ -27,6 +27,7 @@ export default class Logo extends React.Component {
     }
     componentDidMount() {
         this._loadInitialState().done();
+        
     }
 
 
@@ -52,6 +53,7 @@ export default class Logo extends React.Component {
             console.error(error);
         }
     }
+
     render() {
 
         return (

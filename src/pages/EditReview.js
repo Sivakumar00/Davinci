@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, BackHandler, NetInfo, FlatList, Text, TextInput, View, StatusBar } from 'react-native';
+import { StyleSheet, TouchableOpacity,KeyboardAvoidingView, BackHandler, NetInfo, FlatList, Text, TextInput, View, StatusBar } from 'react-native';
 import { db } from '../config/db';
 import Toast from 'react-native-root-toast';
 import { Actions } from 'react-native-router-flux';
 import { Card, AirbnbRating } from 'react-native-elements';
+import { Header } from 'react-native-elements'
 
 export default class EditReview extends React.Component {
 
@@ -127,7 +128,7 @@ export default class EditReview extends React.Component {
   }
   editReviewList = () => {
     return (
-      <View style={styles.containerList}>
+      <KeyboardAvoidingView style={styles.containerList} behavior="padding" enabled>
         <FlatList
           extraData={this.props}
           contentContainerStyle={{ paddingBottom: 20 }}
@@ -135,11 +136,11 @@ export default class EditReview extends React.Component {
           data={this.props.item.response}
           renderItem={this.renderList}
         />
-      </View>
+      </KeyboardAvoidingView>
     )
   }
   finishBtn = () => {
-    console.log('isEdit:'+this.state.isEdit +" disable :"+this.state.btnState);
+    console.log('isEdit:' + this.state.isEdit + " disable :" + this.state.btnState);
     if (this.state.isEdit)
       return (
 
@@ -166,7 +167,7 @@ export default class EditReview extends React.Component {
       var singleStar = weightage / 5;
       var result = singleStar * rating;
       totalResult = totalResult + result;
-      console.log("total result :"+totalResult)
+      console.log("total result :" + totalResult)
     }
     var total = this.state.data.total;
     var percent = (totalResult / total) * 100;
@@ -208,6 +209,10 @@ export default class EditReview extends React.Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
+        <Header
+          backgroundColor="#262d38"
+          centerComponent={{ text: this.state.isEdit  ===true ? 'Edit Review' : 'My Reviews', style: { fontSize: 20, fontWeight: 'bold', color: '#fff' } }}
+        />
         {this.editReviewHeader()}
         {this.editReviewList()}
         {this.finishBtn()}
@@ -235,7 +240,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop:10,
+    marginTop: 10,
   },
   item: {
     color: 'grey',

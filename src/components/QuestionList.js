@@ -8,9 +8,6 @@ import { Actions } from 'react-native-router-flux';
 import { Constants, FileSystem, Permissions } from 'expo';
 import { ProgressDialog } from 'react-native-simple-dialogs';
 
-
-
-
 export default class QuestionList extends React.Component {
 
   constructor(props) {
@@ -20,6 +17,7 @@ export default class QuestionList extends React.Component {
       recordId: '',
       isAdmin: false,
       visible: false,
+      isManager:false,
       mydata: {},
       hasPermission: null,
       reviewedList: [],
@@ -84,6 +82,9 @@ export default class QuestionList extends React.Component {
             myData.push(temp1)
           }
         }
+        if(myData.length>0){
+          this.setState({isManager:true})
+        }
         this.setState({ mydata: myData });
         console.log(JSON.stringify(this.state.mydata))
         // var tree = unflatten(json);
@@ -96,6 +97,7 @@ export default class QuestionList extends React.Component {
   onRefresh = () => {
     this.setState({ data: [] }, function () {
       this.getData();
+      console.log("data onrefresh :"+this.state.data)
     });
 
   }
@@ -130,19 +132,24 @@ export default class QuestionList extends React.Component {
   getData() {
 
     const setState = this.setState.bind(this)
-    var tempArr = this.state.data;
+    var tempArr = [];
+    console.log("getData called..");
+    setState({data:[]},function(){
 
-    db.ref('Questions').on('value', function (snapshot) {
-
-      snapshot.forEach(function (childSnapshot) {
-        childSnapshot.forEach(function (_childSnapshot) {
-          // console.log(_childSnapshot.child('createdby').val());
-          tempArr.push(_childSnapshot.val())
-          //  console.log("value " + JSON.stringify(_childSnapshot.val()));
+      db.ref('Questions').on('value', function (snapshot) {
+  
+        snapshot.forEach(function (childSnapshot) {
+          childSnapshot.forEach(function (_childSnapshot) {
+            // console.log(_childSnapshot.child('createdby').val());
+            tempArr.push(_childSnapshot.val())
+            //  console.log("value " + JSON.stringify(_childSnapshot.val()));
+          })
         })
+  
       })
 
     })
+   
     var json = [];
     db.ref('Review').once('value', function (snapshot) {
       if (snapshot.exists())
@@ -176,7 +183,8 @@ export default class QuestionList extends React.Component {
 
     })
     setState({ isRefreshing: false })
-    setState({ data: tempArr })
+    setState({ data: tempArr.reverse() })
+    
     console.log(this.state.data)
   }
 
@@ -215,6 +223,7 @@ export default class QuestionList extends React.Component {
                     hideOnPress: true,
                     delay: 0,
                   })
+                  
                 }).catch((error) => {
                   console.log("ERROR " + error)
                   Toast.show('Problem Occured :' + error)
@@ -394,14 +403,14 @@ export default class QuestionList extends React.Component {
   render() {
 
     console.log('render triggred########')
-    console.log(this.state.data.length)
+    console.log(this.state.data)
 
     return (
       <View style={styles.container}>
         <FlatList
           style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
           extraData={this.state}
-          data={this.state.data.reverse()}
+          data={this.state.data}
           ListEmptyComponent={this.ListEmptyAssessment}
           refreshControl={
             <RefreshControl
@@ -422,7 +431,7 @@ export default class QuestionList extends React.Component {
                     {item.fromdate} - {item.todate}
                   </Text>
                   <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-around' }}>
-                    {this.state.isAdmin ? <TouchableOpacity onPress={() => this.longPressItem(item, index)} style={{ width: 30, height: 30, alignItems: 'flex-start' }}>
+                    {this.state.isManager ? <TouchableOpacity onPress={() => this.longPressItem(item, index)} style={{ width: 30, height: 30, alignItems: 'flex-start' }}>
                       <Image style={{ width: 25, height: 22, }} source={require('../images/delete.png')} />
                     </TouchableOpacity> : null}
                     <TouchableOpacity onPress={() => this.createPDF(item, index)} style={{ width: 30, height: 30, alignItems: 'flex-end' }}>
@@ -490,7 +499,7 @@ export default class QuestionList extends React.Component {
             </View>
           </Overlay> : null}
 
-        {this.state.isAdmin ?
+        {this.state.isManager ?
           <TouchableOpacity onPress={() => this.addBtnClick()} style={styles.fab}>
             <Text style={styles.fabIcon}>+</Text>
           </TouchableOpacity> : null}
