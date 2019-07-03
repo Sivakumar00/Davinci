@@ -18,7 +18,7 @@ export default class QuestionList extends React.Component {
       isAdmin: false,
       visible: false,
       isManager:false,
-      mydata: {},
+      mydata: [],
       hasPermission: null,
       reviewedList: [],
       modelDisplay: false,
@@ -126,7 +126,7 @@ export default class QuestionList extends React.Component {
     })
     //getting the created assessments
     this.getData()
-    this._loadInitialState()
+   // this._loadInitialState()
   }
 
   getData() {
@@ -135,7 +135,12 @@ export default class QuestionList extends React.Component {
     var tempArr = [];
     console.log("getData called..");
     AsyncStorage.getItem('subs').then((subs)=>{
-      setState({mydata:subs})
+      setState({mydata:JSON.parse(subs)},function(){
+        console.log("data from questionslist :"+JSON.stringify(this.state.mydata))
+      })
+      if(this.state.mydata.length>0)
+      this.setState({isManager:true})
+
     })
 
     setState({data:[]},function(){
@@ -153,20 +158,20 @@ export default class QuestionList extends React.Component {
       })
 
     })
-   
-    var json = [];
-    db.ref('Review').once('value', function (snapshot) {
-      if (snapshot.exists())
-        Object.values(snapshot.val()).forEach(function (val) {
-          Object.values(val).forEach(function (val1) {
-            json.push(Object.values(val1)[0]);
-          })
-        })
+    // var json = [];
+    // db.ref('Review').once('value', function (snapshot) {
+    //   if (snapshot.exists())
+    //     Object.values(snapshot.val()).forEach(function (val) {
+    //       Object.values(val).forEach(function (val1) {
+    //         json.push(Object.values(val1)[0]);
+    //       })
+    //     })
 
-      setState({ review: json }, function () {
-        // console.log(JSON.stringify(this.state.review))
-      })
-    })
+    //   setState({ review: json }, function () {
+    //   console.log(JSON.stringify(this.state.review))
+    //   })
+    // })
+
 
     var reviewedList = [];
     console.log('record firebase ' + this.state.recordId)
@@ -178,7 +183,7 @@ export default class QuestionList extends React.Component {
           childSnapshot.forEach(function (_child) {
             reviewedList.push(childSnapshot.key + " " + _child.child('question_id').val())
             setState({ reviewedList }, function () {
-              //console.log("review /list :" + JSON.stringify(this.state.reviewedList))
+            console.log("review /list :" + JSON.stringify(this.state.reviewedList))
             })
           })
 

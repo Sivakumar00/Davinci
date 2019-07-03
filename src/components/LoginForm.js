@@ -23,7 +23,7 @@ export default class Logo extends React.Component {
       userId: "",
       lockBtn: true,
       showProgress: true,
-      recordId:''
+      recordId: ""
     };
   }
 
@@ -33,73 +33,22 @@ export default class Logo extends React.Component {
   hideProgress = () => {
     this.setState({ showProgress: false });
   };
-  componentDidMount() { 
-    var endpoint = 'https://people.zoho.com/people/api/forms/P_EmployeeView/records?authtoken=6e13da6b433aecfb0236a5ba09632032&searchColumn=EMPLOYEEMAILALIAS&searchValue=' + this.state.username
-    console.log("endpoint :" + endpoint)
-    fetch(endpoint)
-        .then((response) => response.json())
-        .then((responseJson)=>{
-           var json = responseJson[0];
-           this.setState({recordId:json.recordId})
-        }).catch((err)=>{
-          console.error(err)
-        })
-
-    
-    fetch(
-      "https://people.zoho.com/people/api/getSubOrdinates?authtoken=6e13da6b433aecfb0236a5ba09632032"
-    )
-      .then(response => response.text())
-      .then(response => {
-        var str = response;
-        str = str.replace(/\d{18}/g, function(x) {
-          return '"' + x + '"';
-        });
-        return JSON.parse(str);
-      })
-      .then(responseJson => {
-        var json = responseJson.response.result;
-        var temp = {
-          recordId: "249048000000917199",
-          employeeLname: "NS",
-          employeeFname: "Devaraj",
-          employeeId: "VBI10117",
-          employemailId: "devarajns@visualbi.com",
-          reportingTo: ""
-        };
-        json.push(temp);
-
-        //to get immediate team
-        var myData = [];
-        for (var i = 0; i < json.length; i++) {
-          var temp1 = json[i];
-          if (temp1.reportingTo === this.state.recordId) {
-            myData.push(temp1);
-          }
-        }
-        
-        this.setState({ mydata: myData });
-        console.log(JSON.stringify(this.state.mydata));
-        AsyncStorage.setItem('subs',JSON.stringify(this.state.mydata)).then((data)=>
-        {
-          console.log("subs saved");
-        })
-        // var tree = unflatten(json);
-        // this.setState({data:tree});
-      });
-
+  componentDidMount() {
     this._loadInitialState().done();
   }
 
   _loadInitialState = async () => {
     var value = await AsyncStorage.getItem("user");
     if (value !== null) {
-      Actions.home();
+      Actions.home() 
     }
     this.hideProgress();
+
   };
 
   saveUserID = async userId => {
+    var record = '';
+
     try {
       AsyncStorage.setItem("user", userId).then(data => {
         console.log("user id saved");
@@ -107,8 +56,82 @@ export default class Logo extends React.Component {
       AsyncStorage.setItem("userEmail", this.state.username).then(data => {
         console.log("user email saved");
       });
-      //console.log("user id: " + AsyncStorage.getItem('user'))
-      Actions.home();
+      var endpoint =
+      "https://people.zoho.com/people/api/forms/P_EmployeeView/records?authtoken=6e13da6b433aecfb0236a5ba09632032&searchColumn=EMPLOYEEMAILALIAS&searchValue="+this.state.username ;
+    console.log("endpoint :" + endpoint);
+    fetch(endpoint)
+      .then(response => response.json())
+      .then(responseJson => {
+        var json = responseJson[0];
+        console.log("record id:adfa+ " + json.recordId);
+        this.setState({ recordId: json.recordId });
+        record= json.recordId;
+        fetch(
+          "https://people.zoho.com/people/api/getSubOrdinates?authtoken=6e13da6b433aecfb0236a5ba09632032"
+        )
+          .then(response => response.text())
+          .then(response => {
+            var str = response;
+            str = str.replace(/\d{18}/g, function(x) {
+              return '"' + x + '"';
+            });
+            return JSON.parse(str);
+          })
+          .then(responseJson => {
+            console.log(
+              "response subs login : " + JSON.stringify(responseJson)
+            );
+            var json = responseJson.response.result;
+            var temp = {
+              recordId: "249048000000917199",
+              employeeLname: "NS",
+              employeeFname: "Devaraj",
+              employeeId: "VBI10117",
+              employemailId: "devarajns@visualbi.com",
+              reportingTo: ""
+            };
+            json.push(temp);
+
+            //to get immediate team
+            var myData = [];
+            for (var i = 0; i < json.length; i++) {
+              var temp1 = json[i];
+              console.log("record id in login "+ record)
+              if (temp1.reportingTo === record) {
+                console.log(temp1.employeeFname)
+                myData.push(temp1);
+              }
+            }
+
+            this.setState({ mydata: myData });
+            console.log("refined data :"+JSON.stringify(this.state.mydata));
+            AsyncStorage.setItem("subs", JSON.stringify(this.state.mydata)).then(
+              (data) => {
+                console.log("subs saved");
+                Toast.show("Logged In successfully ", {
+                  duration: Toast.durations.SHORT,
+                  position: Toast.positions.BOTTOM,
+                  shadow: true,
+                  animation: true,
+                  hideOnPress: true,
+                  delay: 0
+                });
+                Actions.home();
+                this.hideProgress();
+
+
+              }
+            );
+  
+            // var tree = unflatten(json);
+            // this.setState({data:tree});
+          });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+//console.log("user id: " + AsyncStorage.getItem('user'))
     } catch (error) {
       console.error(error);
     }
@@ -183,14 +206,7 @@ export default class Logo extends React.Component {
             console.log("Auth token " + authToken);
             this.setState({ userId: authToken });
             this.saveUserID(this.state.userId);
-            Toast.show("Logged In successfully ", {
-              duration: Toast.durations.LONG,
-              position: Toast.positions.BOTTOM,
-              shadow: true,
-              animation: true,
-              hideOnPress: true,
-              delay: 0
-            });
+
           } else {
             console.log("Failed:" + data);
             Toast.show("Failed: " + data, {
@@ -201,8 +217,9 @@ export default class Logo extends React.Component {
               hideOnPress: true,
               delay: 0
             });
+            this.hideProgress();
+
           }
-          this.hideProgress();
         })
         .catch(error => {
           this.hideProgress();
