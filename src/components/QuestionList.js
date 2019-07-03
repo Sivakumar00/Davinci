@@ -134,6 +134,10 @@ export default class QuestionList extends React.Component {
     const setState = this.setState.bind(this)
     var tempArr = [];
     console.log("getData called..");
+    AsyncStorage.getItem('subs').then((subs)=>{
+      setState({mydata:subs})
+    })
+
     setState({data:[]},function(){
 
       db.ref('Questions').on('value', function (snapshot) {
@@ -403,14 +407,19 @@ export default class QuestionList extends React.Component {
   render() {
 
     console.log('render triggred########')
-    console.log(this.state.data)
+    //console.log(this.state.data)
 
     return (
       <View style={styles.container}>
         <FlatList
           style={{ height: '100%', marginBottom: 10, alignSelf: 'stretch', flexDirection: 'column', }}
           extraData={this.state}
-          data={this.state.data}
+          data={this.state.data.reduce((unique, o) => {
+            if(!unique.some(obj => obj.key === o.key)) {
+              unique.push(o);
+            }
+            return unique;
+        },[])}
           ListEmptyComponent={this.ListEmptyAssessment}
           refreshControl={
             <RefreshControl
