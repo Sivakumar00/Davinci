@@ -14,9 +14,7 @@ export default class Login extends React.Component {
     );
 
   }
-  signup(){
-    Actions.signup()
-  }
+  
 }
 const styles = StyleSheet.create({
   container:{

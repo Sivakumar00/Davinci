@@ -75,7 +75,7 @@ export default class MyReview extends React.Component {
                   result.push(temp);
                   })
                  // console.log("section list :"+ JSON.stringify(result))
-                  setState({isRefreshing:false,sectionList:result},function(){
+                  setState({isRefreshing:false,sectionList:result.reverse()},function(){
                   //  console.log(JSON.stringify(this.state.sectionList))
                   })
                 })

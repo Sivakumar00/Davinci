@@ -50,50 +50,6 @@ export default class QuestionList extends React.Component {
   };
 
 
-  _loadInitialState = async () => {
-    var resultJson = {};
-    console.log("_load called")
-    fetch('https://people.zoho.com/people/api/getSubOrdinates?authtoken=6e13da6b433aecfb0236a5ba09632032')
-      .then(response => response.text())
-      .then((response) => {
-        var str = response;
-        str = str.replace(/\d{18}/g, function (x) {
-          return '"' + x + '"';
-        })
-        return JSON.parse(str);
-      })
-      .then((responseJson) => {
-        var json = responseJson.response.result;
-        var temp = {
-          "recordId": "249048000000917199",
-          "employeeLname": "NS",
-          "employeeFname": "Devaraj",
-          "employeeId": "VBI10117",
-          "employemailId": "devarajns@visualbi.com",
-          "reportingTo": ""
-        }
-        json.push(temp);
-
-        //to get immediate team
-        var myData = [];
-        for (var i = 0; i < json.length; i++) {
-          var temp1 = json[i];
-          if (temp1.reportingTo === this.state.recordId) {
-            myData.push(temp1)
-          }
-        }
-        if(myData.length>0){
-          this.setState({isManager:true})
-        }
-        this.setState({ mydata: myData });
-        console.log(JSON.stringify(this.state.mydata))
-        // var tree = unflatten(json);
-        // this.setState({data:tree});
-      })
-    if (this.state.isRefreshing) {
-      this.setState({ isRefreshing: false })
-    }
-  }
   onRefresh = () => {
     this.setState({ data: [] }, function () {
       this.getData();
@@ -126,7 +82,6 @@ export default class QuestionList extends React.Component {
     })
     //getting the created assessments
     this.getData()
-   // this._loadInitialState()
   }
 
   getData() {
@@ -528,7 +483,7 @@ export default class QuestionList extends React.Component {
               refreshControl={
                 <RefreshControl
                   refreshing={this.state.isRefreshing}
-                  onRefresh={this._loadInitialState.bind(this)}
+                  onRefresh={this.getData.bind(this)}
                 />
               }
               renderItem={({ item, index }) =>
