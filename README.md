@@ -1,4 +1,3 @@
-https://expo.io/artifacts/11efd383-6d09-41c7-bb29-db8d9722c036
 <p align="center">
   <img src="https://visualbi.com/wp-content/uploads/visualbi-logo-175-60.png"/>
 </p> 
@@ -6,7 +5,7 @@ https://expo.io/artifacts/11efd383-6d09-41c7-bb29-db8d9722c036
 # Davinci
 ### Usage guides
 
-#### Step 1: Download the APK file from [here](https://exp-shell-app-assets.s3.us-west-1.amazonaws.com/android/%40sivakumar00/davinci-bf661b0b4d414c94b98cf2538d4e311d-signed.apk)
+#### Step 1: Download the APK file from [here](https://expo.io/artifacts/11efd383-6d09-41c7-bb29-db8d9722c036)
 
 #### Step 2: Now, go to [ZOHO people - Security](https://accounts.zoho.com/u/h#security/security_pwd)
 
