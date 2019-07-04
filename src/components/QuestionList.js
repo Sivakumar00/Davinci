@@ -5,9 +5,9 @@ import Toast from 'react-native-root-toast';
 import { Card, CheckBox, Overlay } from 'react-native-elements';
 import Modal from "react-native-modal";
 import { Actions } from 'react-native-router-flux';
-import { Constants, FileSystem, Permissions } from 'expo';
 import { ProgressDialog } from 'react-native-simple-dialogs';
-
+import moment from "moment";
+const MMM=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC']
 export default class QuestionList extends React.Component {
 
   constructor(props) {
@@ -19,7 +19,7 @@ export default class QuestionList extends React.Component {
       visible: false,
       isManager:false,
       mydata: [],
-      hasPermission: null,
+      month:'',
       reviewedList: [],
       modelDisplay: false,
       isRefreshing: true,
@@ -58,15 +58,16 @@ export default class QuestionList extends React.Component {
 
   }
 
-  async askPermission() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    this.setState({ hasPermission: status === 'granted' });
-
-  }
 
   componentDidMount() {
 
     const setState = this.setState.bind(this)
+
+    var month = new Date().getMonth();
+    setState({month:month})
+    // var convDate = moment(currentDate,'MMM/DD/YYYY',true).format()
+   // console.log(convDate);
+
     AsyncStorage.getItem('recordId').then((recordId) => {
       setState({ recordId: recordId })
       db.ref('Users/').once('value', function (snapshot) {
@@ -217,13 +218,27 @@ export default class QuestionList extends React.Component {
   //assessment onClickListener
   itemClick(item) {
     //getting the sub-ordinates 
-    this.setState({
-      isModalVisible: true,
-      assessmentItem: item
-    }, function () {
-      console.log("modal displayed..!")
+    var date = item.fromdate;
+    if(date.includes(MMM[this.state.month])){
+      this.setState({
+        isModalVisible: true,
+        assessmentItem: item
+      }, function () {
+        console.log("modal displayed..!")
+  
+      })
+    }else{
+      Toast.show('Assessment locked ..!', {
+        duration: Toast.durations.SHORT,
+        position: Toast.positions.BOTTOM,
+        shadow: true,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+      })
 
-    })
+    }
+    
   }
   getColor = (item) => {
     var rec = item.recordId;
@@ -364,6 +379,28 @@ export default class QuestionList extends React.Component {
       }
     })
   }
+  itemDate(item,index){
+    var image=null;
+    var date = item.fromdate;
+    console.log("checking :"+date + " "+MMM[this.state.month])
+    if(date.includes(MMM[this.state.month])){
+      image=require("../images/new.png")
+    }else{
+      image=require("../images/lock.png")
+    }
+
+    return (
+      <View style={{flex:1,flexDirection:'row'}}>
+                    <Text style={styles.item}>
+                      {item.fromdate} - {item.todate}
+                    </Text>
+                    <Image style={{padding:5,width:'10%',height:30}} source={image} />
+      </View>
+
+    )
+  }
+ 
+
   render() {
 
     console.log('render triggred########')
@@ -378,7 +415,10 @@ export default class QuestionList extends React.Component {
             if(!unique.some(obj => obj.key === o.key)) {
               unique.push(o);
             }
-            return unique;
+            var temp = unique.sort(function(a,b){
+              return new Date(a.fromdate) - new Date(b.fromdate)
+            });
+            return temp.reverse();
         },[])}
           ListEmptyComponent={this.ListEmptyAssessment}
           refreshControl={
@@ -393,12 +433,11 @@ export default class QuestionList extends React.Component {
             >
               <View>
                 <Card
-                  containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
                   title={item.title}
-                  titleStyle={{ fontSize: 18 }}>
-                  <Text style={styles.item}>
-                    {item.fromdate} - {item.todate}
-                  </Text>
+                  titleStyle={{fontSize:18}}
+                  containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: 'white', shadowRadius: 5 }}
+                  >
+                  {this.itemDate(item,index)}
                   <View style={{ flexDirection: 'row', marginTop: 20, justifyContent: 'space-around' }}>
                     {this.state.isManager ? <TouchableOpacity onPress={() => this.longPressItem(item, index)} style={{ width: 30, height: 30, alignItems: 'flex-start' }}>
                       <Image style={{ width: 25, height: 22, }} source={require('../images/delete.png')} />
@@ -538,6 +577,7 @@ const styles = StyleSheet.create({
   },
 
   item: {
+    width:'90%',
     color: '#000',
     fontSize: 15,
     textAlign: 'center',

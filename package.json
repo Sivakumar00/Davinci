@@ -20,6 +20,7 @@
     "jest-react-native": "17.0.0",
     "json-bigint": "^0.3.0",
     "jspdf-react": "^1.0.10",
+    "moment": "^2.24.0",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-datepicker": "^1.7.2",
