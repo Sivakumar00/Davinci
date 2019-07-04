@@ -1,3 +1,4 @@
+https://expo.io/artifacts/11efd383-6d09-41c7-bb29-db8d9722c036
 <p align="center">
   <img src="https://visualbi.com/wp-content/uploads/visualbi-logo-175-60.png"/>
 </p> 
