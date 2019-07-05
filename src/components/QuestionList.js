@@ -114,19 +114,19 @@ export default class QuestionList extends React.Component {
       })
 
     })
-    // var json = [];
-    // db.ref('Review').once('value', function (snapshot) {
-    //   if (snapshot.exists())
-    //     Object.values(snapshot.val()).forEach(function (val) {
-    //       Object.values(val).forEach(function (val1) {
-    //         json.push(Object.values(val1)[0]);
-    //       })
-    //     })
+    var json = [];
+    db.ref('Review').once('value', function (snapshot) {
+      if (snapshot.exists())
+        Object.values(snapshot.val()).forEach(function (val) {
+          Object.values(val).forEach(function (val1) {
+            json.push(Object.values(val1)[0]);
+          })
+        })
 
-    //   setState({ review: json }, function () {
-    //   console.log(JSON.stringify(this.state.review))
-    //   })
-    // })
+      setState({ review: json }, function () {
+      console.log(JSON.stringify(this.state.review))
+      })
+    })
 
 
     var reviewedList = [];
