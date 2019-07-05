@@ -15,7 +15,7 @@ Now, go to [ZOHO people - Security](https://accounts.zoho.com/u/h#security/secur
 Select "App Passwords" in the Left panel
 <br/>
 <p align="center">
-  <img src="https://github.com/Sivakumar00/Davinci/blob/master/Screen%20Shot%202019-07-04%20at%2011.33.09%20AM.png"/>
+  <img src="./screenshots/Screen%20Shot%202019-07-04%20at%2011.33.09%20AM.png"/>
 </p>
 
 #### Step 4: 
@@ -24,7 +24,7 @@ It redirects to authentication page. Enter your ZOHO people password.
 
 <br/>
 <p align="center">
-  <img src="https://github.com/Sivakumar00/Davinci/blob/master/Screen%20Shot%202019-07-04%20at%2011.36.53%20AM.png"/>
+  <img src="./screenshots/Screen%20Shot%202019-07-04%20at%2011.36.53%20AM.png"/>
 </p>
 
 #### Step 5: 
@@ -32,7 +32,7 @@ Then, type "davinci" in app name field and click "Generate" button.
      Note: All letters should be in lowercase.
 <br/>             
 <p align="center">
-  <img src="https://github.com/Sivakumar00/Davinci/blob/master/Screen%20Shot%202019-07-04%20at%2011.37.56%20AM.png"/>
+  <img src="./screenshots/Screen%20Shot%202019-07-04%20at%2011.37.56%20AM.png"/>
 </p>  
 
 ####   *Now you can able to log into app.*
@@ -51,14 +51,14 @@ Go to your ZOHO account [Home page](https://accounts.zoho.com/u/h#home).
 Click on Active Auth tokens.
 <br/>             
 <p align="center">
-  <img src="https://github.com/Sivakumar00/Davinci/blob/master/Screen%20Shot%202019-07-04%20at%204.29.29%20PM.png"/>
+  <img src="./screenshots/Screen%20Shot%202019-07-04%20at%204.29.29%20PM.png"/>
 </p>
 
 #### Step 3:
 Select the auth tokens and click "Remove Selected" button.
 <br/>             
 <p align="center">
-  <img src="https://github.com/Sivakumar00/Davinci/blob/master/Screen%20Shot%202019-07-04%20at%204.34.27%20PM.png"/>
+  <img src="./screenshots/Screen%20Shot%202019-07-04%20at%204.34.27%20PM.png"/>
 </p>
 
 
