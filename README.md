@@ -15,7 +15,8 @@ Now, go to [ZOHO people - Security](https://accounts.zoho.com/u/h#security/secur
 
 #### Step 3: 
 Select "App Passwords" in the Left panel
-<br/>
+
+
 <p align="center">
   <img src="./screenshots/Screen%20Shot%202019-07-04%20at%2011.33.09%20AM.png"/>
 </p>
@@ -24,7 +25,6 @@ Select "App Passwords" in the Left panel
 It redirects to authentication page. Enter your ZOHO people password.
 
 
-<br/>
 <p align="center">
   <img src="./screenshots/Screen%20Shot%202019-07-04%20at%2011.36.53%20AM.png"/>
 </p>
@@ -33,7 +33,8 @@ It redirects to authentication page. Enter your ZOHO people password.
 Then, type "davinci" in app name field and click "Generate" button.
 
      Note: All letters should be in lowercase.
-<br/>             
+     
+     
 <p align="center">
   <img src="./screenshots/Screen%20Shot%202019-07-04%20at%2011.37.56%20AM.png"/>
 </p>  
@@ -52,14 +53,16 @@ Go to your ZOHO account [Home page](https://accounts.zoho.com/u/h#home).
 
 #### Step 2: 
 Click on Active Auth tokens.
-<br/>             
+
+
 <p align="center">
   <img src="./screenshots/Screen%20Shot%202019-07-04%20at%204.29.29%20PM.png"/>
 </p>
 
 #### Step 3:
 Select the auth tokens and click "Remove Selected" button.
-<br/>             
+
+
 <p align="center">
   <img src="./screenshots/Screen%20Shot%202019-07-04%20at%204.34.27%20PM.png"/>
 </p>
