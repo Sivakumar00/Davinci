@@ -8,6 +8,8 @@
 #### Step 1: 
 Download the APK file from [here](https://expo.io/artifacts/11efd383-6d09-41c7-bb29-db8d9722c036)
 
+    Note: While installing the apk, play store may prompt about Security. Select "Install Anyway" to proceed next.
+
 #### Step 2: 
 Now, go to [ZOHO people - Security](https://accounts.zoho.com/u/h#security/security_pwd)
 
@@ -29,6 +31,7 @@ It redirects to authentication page. Enter your ZOHO people password.
 
 #### Step 5: 
 Then, type "davinci" in app name field and click "Generate" button.
+
      Note: All letters should be in lowercase.
 <br/>             
 <p align="center">
