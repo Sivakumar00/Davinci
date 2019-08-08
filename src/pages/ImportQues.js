@@ -172,6 +172,10 @@ export default class ImportQues extends React.Component {
             <View style={styles.container}>
                 <Header backgroundColor="#37474f"
                     centerComponent={{ text: 'Question Templates', style: { color: '#fff', fontSize: 20 } }}
+                    rightComponent={ 
+                <TouchableOpacity onPress={()=>{this.proceedToNextBtn()}}>
+                    <Image source={require('../images/tick.png')} style={{width:25,height:28}}/>
+                </TouchableOpacity>}
                 />
                 {!this.state.isConnected ?
                     <View style={styles.offlineContainer}>
@@ -194,11 +198,7 @@ export default class ImportQues extends React.Component {
                     ListEmptyComponent={this.ListEmptyContent}
                     renderItem={this._renderQuesList}
                 />
-                <TouchableOpacity style={{backgroundColor:'#1e88e5',width:'100%'}}
-                    onPress={()=>{this.proceedToNextBtn()}}
-                >
-                    <Text style={{color:'white',textAlign:'center',padding:10,fontSize:18,fontWeight:'bold'}}>Proceed To Next</Text>
-                </TouchableOpacity>
+               
             </View>
         );
 

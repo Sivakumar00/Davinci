@@ -218,8 +218,9 @@ export default class QuestionList extends React.Component {
   //assessment onClickListener
   itemClick(item) {
     //getting the sub-ordinates 
-    var date = item.fromdate;
-    if(date.includes(MMM[this.state.month])){
+    var date = item.todate;
+    console.log(date)
+    if(date.includes(MMM[this.state.month])|| date.includes(MMM[this.state.month-1])){
       this.setState({
         isModalVisible: true,
         assessmentItem: item
@@ -383,7 +384,7 @@ export default class QuestionList extends React.Component {
     var image=null;
     var date = item.fromdate;
     console.log("checking :"+date + " "+MMM[this.state.month])
-    if(date.includes(MMM[this.state.month])){
+    if(date.includes(MMM[this.state.month])|| date.includes(MMM[this.state.month-1])){
       image=require("../images/new.png")
     }else{
       image=require("../images/lock.png")
