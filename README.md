@@ -6,7 +6,7 @@
 ## Usage guides
 
 #### Step 1: 
-Download the APK file [here](https://expo.io/artifacts/b0649623-c8fb-46c6-897b-d5bb2259fd5b)
+Download the APK file [here](https://expo.io/artifacts/2308bcff-a55e-49a0-9656-c70cb66e1942)
 
     Note: While installing the apk, play store may prompt about Security. Select "Install Anyway" to proceed next.
 
