@@ -298,23 +298,26 @@ export default class QuestionList extends React.Component {
         }
       }
       //console.log("print data set" + JSON.stringify(json))
+      var htmlArray=[];
+      var nameArray=[];
       if (json.length > 0) {
-        var htmlText = '<html><head><style> hr{display: block;height: 1px;border: 0;border-top: 1px solid #000;margin: 1em 0;padding: 0;}table {font-family: arial, sans-serif; border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px}tr:nth-child(even) {background-color: #dddddd;}</style></head><body>';
-        htmlText = htmlText + '<h2 style=\"color:grey;font-family:Lucida Sans;text-align:center\">' + json[0].title + ' report</h2><h3 style=\"color:grey;font-family:Lucida Sans;text-align:center\">Date:' + json[0].startdate + ' -- ' + json[0].enddate + '</h3>'
-        for (var obj of json) {
+        for(var obj of json){
+          var htmlText = '<html><head><style> hr{display: block;height: 1px;border: 0;border-top: 1px solid #000;margin: 1em 0;padding: 0;}table {font-family: arial, sans-serif; border-collapse: collapse;width: 100%;}td, th {border: 1px solid #dddddd;text-align: left;padding: 8px}tr:nth-child(even) {background-color: #dddddd;}</style></head><body>';
+          htmlText = htmlText + '<h2 style=\"color:grey;font-family:Lucida Sans;text-align:center\">' + obj.title + ' report</h2><h3 style=\"color:grey;font-family:Lucida Sans;text-align:center\">Date:' + obj.startdate + ' -- ' + obj.enddate + '</h3>'
           htmlText = htmlText + '<h3 style=\"font-family:Lucida Sans;text-align:center\">' + obj.name + '</h3><h3 style=\"color:grey;font-family:Lucida Sans;text-align:center\">' + obj.email + '</h4><br>'
           htmlText = htmlText + '<table><tr><th>Question</th><th>Rating</th><th>Comments</th></tr>'
           for (var _obj of obj.response) {
             htmlText = htmlText + '<tr><td>' + _obj.question + '</td><td>' + _obj.rating + ' / 5</td><td>' + _obj.comments + '</td></tr>'
           }
           htmlText = htmlText + '</table><h3 style=\"color:green;text-align:center\">Total percent acquired:' + Math.round(obj.result) + ' %</h3><br><hr/>'
-
+          htmlText = htmlText + '</body></html>'
+          htmlArray.push(htmlText);
+          nameArray.push(obj.name);
         }
-        htmlText = htmlText + '</body></html>'
-
-        console.log(htmlText);
+        console.log(JSON.stringify(htmlArray))
         AsyncStorage.getItem('userEmail').then((email) => {
           fetch('https://us-central1-davinci-00-1.cloudfunctions.net/widgets/pdf',
+          //fetch('http://localhost:5000/davinci-00-1/us-central1/widgets/pdf',
             {
               method: 'POST',
               headers: {
@@ -322,8 +325,9 @@ export default class QuestionList extends React.Component {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                html: htmlText,
+                html: htmlArray,
                 email: email,
+                name:nameArray,
                 subject: json[0].title
               })
             }
@@ -362,7 +366,7 @@ export default class QuestionList extends React.Component {
                 hideOnPress: true,
                 delay: 0,
               })
-              console.error(err)
+              this.setState({ showProgress: false })
             })
 
         })

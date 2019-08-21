@@ -1,10 +1,12 @@
-const functions = require('firebase-functions');
-const express = require('express');
-const cors = require('cors');
+/* eslint-disable promise/catch-or-return */
+const functions = require("firebase-functions");
+const express = require("express");
+const cors = require("cors");
 const app = express();
 const bodyParser = require("body-parser");
-const pdf = require('html-pdf');
-const admin = require('firebase-admin');
+const pdf = require("html-pdf");
+const admin = require("firebase-admin");
+var http = require("http");
 admin.initializeApp();
 const nodemailer = require("nodemailer");
 
@@ -13,92 +15,94 @@ app.use(cors({ origin: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.post("/pdf", (req, res, next) => {
 
-app.post('/pdf', (req, res, next) => {
-    var result = '';
-    try {
-        var item = req.body.html;
-        if (item !== null || item !== '') {
-            var options = {
-                format: 'Letter',
-                border: {
-                    top: "2cm",
-                    right: "1cm",
-                    bottom: "2cm",
-                    left: "1.5cm"
-                },
-            };
-            pdf.create(item, options).toBuffer(function (err, buffer) {
-                if (err) return console.log(err);
-                //stream.pipe(res)
-                //res.send(PDF);
-                sendEmail(req.body.email, req.body.subject, buffer);
+  sendEmail = (email, subject, attachment) => {
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "davincivbi@gmail.com",
+        pass: "Davinci@123"
+      }
+    });
+    var attach = [];
+    let nameArr = req.body.name;
+    attachment.map((attachment,index)=>{
+        temp={};
+        temp['filename']=nameArr[index]+'.pdf';
+        temp['content']=attachment;
+        attach.push(temp);
+    })
+    console.log(JSON.stringify(attach))
+    var config = {
+      from: "davincivbi@gmail.com",
+      to: email,
+      subject: subject,
+      text: "Hi,\n Don't reply for this mail.",
+      attachments: attach
+    };
 
-            });
+    console.log(JSON.stringify(config));
+    if (config.attachments.length > 1) {
+      transporter.sendMail(config, function(err, info) {
+        if (err) {
+          res.send(err);
         } else {
-            res.send({ error: 'bad request' })
+          console.log(info);
+          res.send(info);
         }
-
-    } catch (err) {
-        console.error("ERROR " + err);
+      });
+    } else {
+      console.log("no attachments");
     }
+  };
+  getAttachment = item => {
+    var attachment = [];
+    // eslint-disable-next-line promise/always-return
+    convertHtmlToPdf(item).then((attachment) => {
+        console.log("then block")
+        sendEmail(req.body.email,req.body.subject,attachment);
+    }).catch((err)=>{
+        console.log("ERROR "+JSON.stringify(err));
+    })
+    return attachment;
+  };
 
-    sendEmail = (email, subject, buffer) => {
-        let transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'davincivbi@gmail.com',
-                pass: 'Davinci@123'
-            }
+  convertHtmlToPdf = (item,options) => {
+    return new Promise(function(resolve, reject) {
+        pdf.create(item, options).toBuffer((err, buffer) => {
+          if (err) reject(err);
+          resolve(buffer )
         });
-        transporter.sendMail({
-            from: 'davincivbi@gmail.com',
-            to: email,
-            subject: subject,
-            text: "Hi,\n Don't reply for this mail.",
-            attachments: [{
-                filename: subject + '.pdf',
-                content: new Buffer(buffer, 'utf-8')
-            }]
-        }, function (err, info) {
-            if (err) {
-                res.send(err)
-            } else {
-                console.log(info);
-                res.send(info)
-            }
-        })
+    });
+  };
+  try {
+    var item = req.body.html;
+    if (item !== null || item !== "") {
+      var options = {
+        format: "Letter",
+        border: {
+          top: "2cm",
+          right: "1cm",
+          bottom: "2cm",
+          left: "1.5cm"
+        }
+      };
+      var bufferArray = [];
+      var nameArray = req.body.name;
+      var count = 0;
 
-
+      // for(var obj of item){
+      let res = item.map((obj) => convertHtmlToPdf(obj,options))
+      
+      Promise.all(res).then((attachment)=>sendEmail(req.body.email,req.body.subject,attachment))
+      
+    } else {
+      res.send({ error: "bad request" });
     }
-
-    // storage.bucket(bucket).upload(resp.filename, {
-    //     gzip: true,
-    //     metadata: {
-    //         cacheControl: 'public, max-age=31536000',
-    //     },
-    // }).then((data) => {
-
-
-    // console.log(data)
-    // console.log(`${resp.filename} uploaded to ${bucket}.`);
-    // const file = storage.bucket(bucket).file(targetName);
-    // return file.getSignedUrl({
-    //     action: 'read',
-    //     expires: '03-09-2491'
-    // }).then(signedUrls => {
-    //     // signedUrls[0] contains the file's public URL
-    //     console.log("signed url " + signedUrls[0].replace('storage.googleapis.com', 'storage.cloud.google.com'));
-    //     result = '' + signedUrls[0].replace('storage.googleapis.com', 'storage.cloud.google.com')
-    //     res.send({ result, html: item })
-
-    // });
-
-    //  });
-
-
-
-    // res.status(200).json({ html: item });
+  } catch (err) {
+    res.send({error:"err"});
+  }
 });
 
 // Expose Express API as a single Cloud Function:
