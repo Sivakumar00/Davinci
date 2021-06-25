@@ -44,22 +44,23 @@ export default class Review extends React.Component {
             snapPosition: 0,
             headerheight: true,
             response: [],
-            total:0,
+            total: 0,
             rightBtnVisible: true,
             currentIndex: 0,
-            showUploadProgress: false,
+            showProgress: false,
             slider1ActiveSlide: SLIDER_1_FIRST_ITEM,
             employeeName: '',
             image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/768px-Circle-icons-profile.svg.png',
             isLoading: true,
             email: '',
             present: 0,
-            showProgress: true,
+            showUploadProgress: false,
         }
         this._loadInit = this._loadInit.bind(this)
         this.hideProgress = this.hideProgress.bind(this)
-        this.showUploadProgress = this.openReviewProgress.bind(this)
-        this.hideProgress = this.hideReviewProgress.bind(this);
+        this.openReviewProgress = this.openReviewProgress.bind(this)
+        this.hideReviewProgress = this.hideReviewProgress.bind(this)
+        this.openProgress = this.openProgress.bind(this);
         this.finishBtn = this.finishBtn.bind(this);
     }
     openProgress = () => {
@@ -70,11 +71,15 @@ export default class Review extends React.Component {
         this.setState({ showProgress: false });
     }
     openReviewProgress = () => {
-        this.setState({ showUploadProgress: true });
+        this.setState({ showUploadProgress: true },function(){
+            console.log(this.state.showUploadProgress)   
+        });
     }
 
     hideReviewProgress = () => {
-        this.setState({ showUploadProgress: false });
+        this.setState({ showUploadProgress: false },function(){
+            console.log(this.state.showUploadProgress)
+        });
     }
 
     componentDidMount() {
@@ -129,7 +134,7 @@ export default class Review extends React.Component {
         console.log("Rating is: " + rating)
     }
 
-    finishBtn(){
+    finishBtn() {
         const setState = this.setState.bind(this);
         this.openReviewProgress();
         console.log(JSON.stringify(this.state.response))
@@ -147,21 +152,21 @@ export default class Review extends React.Component {
         } else {
             //to calculate review results
             var totalResult = 0;
-            for(var i in response){
+            for (var i in response) {
                 var weightage = response[i].weightage;
                 var rating = response[i].rating;
                 //single star value
                 var singleStar = weightage / 5;
                 var result = singleStar * rating;
-                totalResult=totalResult+result;
-                console.log("total result :"+totalResult)
+                totalResult = totalResult + result;
+                console.log("total result :" + totalResult)
             }
-            var total =  this.state.total;
-            var percent = (totalResult/total)*100;
+            var total = this.state.total;
+            var percent = (totalResult / total) * 100;
 
             AsyncStorage.getItem('recordId').then((record_id) => {
                 var final_json = {
-                    name:this.state.employeeName,
+                    name: this.state.employeeName,
                     title: this.state.title,
                     startdate: this.state.startdate,
                     enddate: this.state.enddate,
@@ -169,28 +174,35 @@ export default class Review extends React.Component {
                     question_id: this.state.key,
                     response: this.state.response,
                     reviewer: record_id,
-                    result:percent,
-                    recordId:this.state.recordId,
+                    result: percent,
+                    recordId: this.state.recordId,
                     total
-                    
+
                 }
-                db.ref('/Review/' + record_id + '/' + this.state.recordId+'/'+this.state.key).set(final_json)
-                    .then((data) => {Toast.show("Assessment review saved ..! ", {
-                        duration: Toast.durations.LONG,
-                        position: Toast.positions.BOTTOM,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,})
+                db.ref('/Review/' + record_id + '/' + this.state.recordId + '/' + this.state.key).set(final_json)
+                    .then((data) => {
+                        this.hideReviewProgress()
+                        Toast.show("Assessment review saved ..! ", {
+                            duration: Toast.durations.LONG,
+                            position: Toast.positions.BOTTOM,
+                            shadow: true,
+                            animation: true,
+                            hideOnPress: true,
+                            delay: 0,
+                        })
                         Actions.pop();
                     })
-                    .catch((err)=>Toast.show(err, {
-                        duration: Toast.durations.LONG,
-                        position: Toast.positions.BOTTOM,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,}))
+                    .catch((err) => {
+                        this.hideReviewProgress()
+                        Toast.show(err, {
+                            duration: Toast.durations.LONG,
+                            position: Toast.positions.BOTTOM,
+                            shadow: true,
+                            animation: true,
+                            hideOnPress: true,
+                            delay: 0,
+                        })
+                    })
 
             })
         }
@@ -213,7 +225,7 @@ export default class Review extends React.Component {
             enddate: jsonAssItem.todate,
             key: jsonAssItem.key,
             email: jsonItem.employemailId,
-            total:jsonAssItem.total
+            total: jsonAssItem.total
 
         }, function () {
             const setState = this.setState.bind(this);

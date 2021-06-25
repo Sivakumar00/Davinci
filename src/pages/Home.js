@@ -1,8 +1,6 @@
 import React from 'react';
-import { StyleSheet,NetInfo,Dimensions, Text, View,Image,TouchableOpacity,BackHandler,Platform,Alert } from 'react-native';
-import Header from '../components/Header' 
-import Assessment from '../components/Assessment';
-import RNExitApp from 'react-native-exit-app';
+import { StyleSheet,NetInfo,Dimensions, Text, View,AsyncStorage,TouchableOpacity,BackHandler,Platform,Alert } from 'react-native';
+import HeaderPro from '../components/HeaderPro' 
 import BottomList from '../components/BottomList';
 import { Actions } from 'react-native-router-flux';
 const { width } = Dimensions.get('window');
@@ -12,7 +10,8 @@ export default class Home extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      isConnected:true
+      isConnected:true,
+      isManager:true
     }
     this.handleBackButton= this.handleBackButton.bind(this);
   }
@@ -20,17 +19,35 @@ export default class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-         
-            <Header/>
+            
+            <HeaderPro/>
             {!this.state.isConnected?
                 <View style={styles.offlineContainer}>
                 <Text style={styles.offlineText}>No Internet Connection</Text>
               </View>:null}
-            <BottomList/>
+            <BottomList isManager={this.state.isManager}/>
       </View>
     );
   }
   
+  componentWillMount(){
+    AsyncStorage.getItem('user').then((auth)=>{
+      fetch('https://people.zoho.com/people/api/getSubOrdinates?authtoken='+auth)
+        .then((response)=>response.json())
+        .then((responseJson)=>{
+          if(responseJson.response.result.length === 0){
+            this.setState({isManager:false},function(){
+              console.log("isManager :"+this.state.isManager)
+              AsyncStorage.setItem('isManager',"false")
+            })
+          }else{
+            AsyncStorage.setItem('isManager',"true" )
+          }
+        })
+
+    })
+  }
+
   componentDidMount(){
       BackHandler.addEventListener('hardwareBackPress',this.handleBackButton);
       NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
@@ -41,7 +58,8 @@ export default class Home extends React.Component {
     if (Actions.state.index === 0) {
       return false
     }
-    BackHandler.exitApp();
+    if(Platform.OS==="android")
+      BackHandler.exitApp();
     
     return true
   }
@@ -57,11 +75,8 @@ export default class Home extends React.Component {
   componentWillUnmount(){
     BackHandler.removeEventListener('hardwareBackPress',this.handleBackButton);
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
-
   }
-
 }
-
 
 const styles = StyleSheet.create({
   container:{
